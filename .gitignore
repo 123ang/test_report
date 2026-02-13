@@ -35,12 +35,12 @@ lerna-debug.log*
 # OS
 Thumbs.db
 
-# Uploads
-server/uploads/*
-!server/uploads/.gitkeep
+# Uploads (user-uploaded photos in test cases)
+backend/uploads/*
+!backend/uploads/.gitkeep
 
 # Prisma
-server/prisma/migrations/
+backend/prisma/migrations/
 
 # PM2
 .pm2/
