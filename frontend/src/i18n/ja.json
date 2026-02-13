@@ -18,7 +18,9 @@
     "loginButton": "サインイン",
     "registerButton": "サインアップ",
     "noAccount": "アカウントをお持ちでないですか？",
-    "haveAccount": "既にアカウントをお持ちですか？"
+    "haveAccount": "既にアカウントをお持ちですか？",
+    "invalidCredentials": "メールアドレスまたはパスワードが正しくありません。もう一度お試しください。",
+    "loginFailed": "ログインに失敗しました"
   },
   "testCase": {
     "title": "タイトル",
@@ -106,5 +108,19 @@
     "no": "いいえ",
     "actions": "操作",
     "search": "検索"
+  },
+  "members": {
+    "title": "メンバー",
+    "addMember": "メンバーを追加",
+    "removeMember": "メンバーを削除",
+    "email": "メール",
+    "inviteByEmail": "メールで招待",
+    "addButton": "追加",
+    "noMembers": "まだメンバーがいません",
+    "userNotRegistered": "ユーザーが登録されていません。先にアカウントを作成するようお願いしてください。",
+    "alreadyMember": "既にメンバーです",
+    "alreadyOwner": "あなたは既にオーナーです",
+    "memberAdded": "メンバーが追加されました",
+    "memberRemoved": "メンバーが削除されました"
   }
 }

@@ -7,24 +7,33 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  
+  const [errorMessage, setErrorMessage] = useState('');
+
   const { login } = useAuth();
   const { t } = useLang();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage('');
     setLoading(true);
 
     try {
       await login(email, password);
       navigate('/');
     } catch (error) {
-      // Error handled by AuthContext
+      const msg = error.response?.data?.error;
+      if (msg && (msg.toLowerCase().includes('invalid') || msg.toLowerCase().includes('password') || msg.toLowerCase().includes('email'))) {
+        setErrorMessage(t('auth.invalidCredentials'));
+      } else {
+        setErrorMessage(msg || t('auth.loginFailed'));
+      }
     } finally {
       setLoading(false);
     }
   };
+
+  const clearError = () => setErrorMessage('');
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8 sm:py-12">
@@ -41,6 +50,18 @@ const LoginPage = () => {
 
         <div className="card p-4 sm:p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
+            {errorMessage && (
+              <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 flex items-start gap-2" role="alert">
+                <svg className="w-5 h-5 flex-shrink-0 text-red-500 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <span>{errorMessage}</span>
+                <button type="button" onClick={clearError} className="ml-auto p-1 rounded hover:bg-red-100 text-red-600" aria-label="Dismiss">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                </button>
+              </div>
+            )}
+
             <div>
               <label htmlFor="email" className="label">
                 {t('auth.email')}
@@ -49,7 +70,7 @@ const LoginPage = () => {
                 id="email"
                 type="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => { setEmail(e.target.value); clearError(); }}
                 className="input"
                 required
                 autoComplete="email"
@@ -64,7 +85,7 @@ const LoginPage = () => {
                 id="password"
                 type="password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => { setPassword(e.target.value); clearError(); }}
                 className="input"
                 required
                 autoComplete="current-password"

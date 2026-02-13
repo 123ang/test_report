@@ -14,16 +14,25 @@ const prisma = new PrismaClient();
 
 router.use(authMiddleware);
 
-// List test cases (optional filters: versionId, status, severity, priority, search)
+// List test cases (only accessible projects; optional filters: versionId, projectId, status, etc.)
 router.get('/', async (req, res, next) => {
   try {
     const { versionId, projectId, status, severity, priority, search, page = 1, limit = 50 } = req.query;
     const skip = (parseInt(page) - 1) * parseInt(limit);
     const take = parseInt(limit);
 
-    const where = {};
+    const where = {
+      version: {
+        project: {
+          OR: [
+            { createdById: req.user.id },
+            { members: { some: { userId: req.user.id } } },
+          ],
+        },
+      },
+    };
     if (versionId) where.versionId = parseInt(versionId);
-    if (projectId) where.version = { projectId: parseInt(projectId) };
+    if (projectId) where.version.projectId = parseInt(projectId);
     if (status) where.status = status;
     if (severity) where.severity = severity;
     if (priority) where.priority = priority;
@@ -56,11 +65,21 @@ router.get('/', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// Get single test case
+// Get single test case (only if in an accessible project)
 router.get('/:id', async (req, res, next) => {
   try {
-    const tc = await prisma.testCase.findUnique({
-      where: { id: parseInt(req.params.id) },
+    const tc = await prisma.testCase.findFirst({
+      where: {
+        id: parseInt(req.params.id),
+        version: {
+          project: {
+            OR: [
+              { createdById: req.user.id },
+              { members: { some: { userId: req.user.id } } },
+            ],
+          },
+        },
+      },
       include: {
         createdBy: { select: { id: true, name: true } },
         version: { include: { project: { select: { id: true, name: true, language: true } } } },
@@ -72,11 +91,24 @@ router.get('/:id', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// Create test case
+// Create test case (only if version's project is accessible)
 router.post('/', async (req, res, next) => {
   try {
     const { versionId, bug, test, result, severity, priority, notes } = req.body;
     if (!versionId || !bug || !test) return res.status(400).json({ error: 'versionId, bug, and test are required' });
+
+    const version = await prisma.version.findFirst({
+      where: {
+        id: parseInt(versionId),
+        project: {
+          OR: [
+            { createdById: req.user.id },
+            { members: { some: { userId: req.user.id } } },
+          ],
+        },
+      },
+    });
+    if (!version) return res.status(404).json({ error: 'Version not found' });
 
     const tc = await prisma.testCase.create({
       data: {
@@ -94,12 +126,24 @@ router.post('/', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// Update test case
+// Update test case (only if in an accessible project)
 router.put('/:id', async (req, res, next) => {
   try {
     const { bug, test, result, severity, priority, notes, isFixed, isVerified } = req.body;
 
-    const existing = await prisma.testCase.findUnique({ where: { id: parseInt(req.params.id) } });
+    const existing = await prisma.testCase.findFirst({
+      where: {
+        id: parseInt(req.params.id),
+        version: {
+          project: {
+            OR: [
+              { createdById: req.user.id },
+              { members: { some: { userId: req.user.id } } },
+            ],
+          },
+        },
+      },
+    });
     if (!existing) return res.status(404).json({ error: 'Not found' });
 
     // Determine status from checkboxes
@@ -145,11 +189,23 @@ router.put('/:id', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// Bulk update (for checkbox toggling from table)
+// Bulk update (for checkbox toggling from table; only if in accessible project)
 router.patch('/:id/toggle', async (req, res, next) => {
   try {
     const { field } = req.body; // 'isFixed' or 'isVerified'
-    const existing = await prisma.testCase.findUnique({ where: { id: parseInt(req.params.id) } });
+    const existing = await prisma.testCase.findFirst({
+      where: {
+        id: parseInt(req.params.id),
+        version: {
+          project: {
+            OR: [
+              { createdById: req.user.id },
+              { members: { some: { userId: req.user.id } } },
+            ],
+          },
+        },
+      },
+    });
     if (!existing) return res.status(404).json({ error: 'Not found' });
 
     let fixed = existing.isFixed;
@@ -179,11 +235,23 @@ router.patch('/:id/toggle', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// Upload images to a test case (up to 5 at once)
+// Upload images to a test case (only if in accessible project; up to 5 at once)
 router.post('/:id/images', upload.array('images', 5), async (req, res, next) => {
   try {
     const testCaseId = parseInt(req.params.id);
-    const tc = await prisma.testCase.findUnique({ where: { id: testCaseId } });
+    const tc = await prisma.testCase.findFirst({
+      where: {
+        id: testCaseId,
+        version: {
+          project: {
+            OR: [
+              { createdById: req.user.id },
+              { members: { some: { userId: req.user.id } } },
+            ],
+          },
+        },
+      },
+    });
     if (!tc) return res.status(404).json({ error: 'Test case not found' });
 
     if (!req.files || req.files.length === 0) {
@@ -207,10 +275,24 @@ router.post('/:id/images', upload.array('images', 5), async (req, res, next) => 
   } catch (e) { next(e); }
 });
 
-// Delete a single image (must be before /:id to avoid route conflict)
+// Delete a single image (only if test case is in accessible project)
 router.delete('/images/:imageId', async (req, res, next) => {
   try {
-    const image = await prisma.testCaseImage.findUnique({ where: { id: parseInt(req.params.imageId) } });
+    const image = await prisma.testCaseImage.findFirst({
+      where: {
+        id: parseInt(req.params.imageId),
+        testCase: {
+          version: {
+            project: {
+              OR: [
+                { createdById: req.user.id },
+                { members: { some: { userId: req.user.id } } },
+              ],
+            },
+          },
+        },
+      },
+    });
     if (!image) return res.status(404).json({ error: 'Image not found' });
 
     // Delete file from disk
@@ -222,9 +304,24 @@ router.delete('/images/:imageId', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// Delete test case
+// Delete test case (only if in accessible project)
 router.delete('/:id', async (req, res, next) => {
   try {
+    const existing = await prisma.testCase.findFirst({
+      where: {
+        id: parseInt(req.params.id),
+        version: {
+          project: {
+            OR: [
+              { createdById: req.user.id },
+              { members: { some: { userId: req.user.id } } },
+            ],
+          },
+        },
+      },
+    });
+    if (!existing) return res.status(404).json({ error: 'Not found' });
+
     // Delete associated image files from disk
     const images = await prisma.testCaseImage.findMany({ where: { testCaseId: parseInt(req.params.id) } });
     images.forEach(img => {

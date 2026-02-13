@@ -15,6 +15,8 @@ const ProjectsPage = () => {
   const [editProject, setEditProject] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
   const [form, setForm] = useState({ name: '', description: '', language: 'en' });
+  const [memberEmail, setMemberEmail] = useState('');
+  const [removeMemberId, setRemoveMemberId] = useState(null);
   const { t } = useLang();
 
   useEffect(() => { load(); }, []);
@@ -37,6 +39,7 @@ const ProjectsPage = () => {
   const openEdit = (p) => {
     setEditProject(p);
     setForm({ name: p.name, description: p.description || '', language: p.language });
+    setMemberEmail('');
     setShowForm(true);
   };
 
@@ -63,6 +66,38 @@ const ProjectsPage = () => {
       load();
     } catch (e) { toast.error('Failed to delete'); }
   };
+
+  const handleAddMember = async (e) => {
+    e.preventDefault();
+    if (!memberEmail.trim()) return;
+    try {
+      await projectService.addMember(editProject.id, memberEmail);
+      toast.success(t('members.memberAdded'));
+      setMemberEmail('');
+      const updated = await projectService.getById(editProject.id);
+      setEditProject(updated);
+      load();
+    } catch (err) {
+      const msg = err.response?.data?.error || 'Failed';
+      if (msg.includes('not registered')) toast.error(t('members.userNotRegistered'));
+      else if (msg.includes('already a member')) toast.error(t('members.alreadyMember'));
+      else if (msg.includes('already the owner')) toast.error(t('members.alreadyOwner'));
+      else toast.error(msg);
+    }
+  };
+
+  const handleRemoveMember = async () => {
+    try {
+      await projectService.removeMember(editProject.id, removeMemberId);
+      toast.success(t('members.memberRemoved'));
+      setRemoveMemberId(null);
+      const updated = await projectService.getById(editProject.id);
+      setEditProject(updated);
+      load();
+    } catch (e) { toast.error('Failed to remove member'); }
+  };
+
+  const isOwner = (p) => p?.createdById === JSON.parse(localStorage.getItem('user'))?.id;
 
   if (loading) return <Loading />;
 
@@ -129,6 +164,34 @@ const ProjectsPage = () => {
                   <option value="zh">中文 (Chinese)</option>
                 </select>
               </div>
+              {/* Members section (only show if editing and owner) */}
+              {editProject && isOwner(editProject) && (
+                <div className="border-t pt-4 mt-2">
+                  <h3 className="text-sm font-semibold text-gray-900 mb-3">{t('members.title')}</h3>
+                  {/* Add member form */}
+                  <form onSubmit={handleAddMember} className="flex gap-2 mb-3">
+                    <input type="email" value={memberEmail} onChange={e => setMemberEmail(e.target.value)}
+                      className="input flex-1 text-sm" placeholder={t('members.email')} />
+                    <button type="submit" className="btn bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-sm px-3">{t('members.addButton')}</button>
+                  </form>
+                  {/* Member list */}
+                  {editProject.members && editProject.members.length > 0 ? (
+                    <div className="space-y-2">
+                      {editProject.members.map(m => (
+                        <div key={m.id} className="flex items-center justify-between p-2 bg-gray-50 rounded text-sm">
+                          <div className="min-w-0 flex-1">
+                            <p className="font-medium truncate">{m.user.name}</p>
+                            <p className="text-xs text-gray-500 truncate">{m.user.email}</p>
+                          </div>
+                          <button type="button" onClick={() => setRemoveMemberId(m.id)} className="text-xs text-red-500 hover:text-red-700 ml-2">Remove</button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-gray-500">{t('members.noMembers')}</p>
+                  )}
+                </div>
+              )}
               <div className="flex gap-3 pt-2">
                 <button type="submit" className="btn btn-primary flex-1">{editProject ? 'Save' : 'Create'}</button>
                 <button type="button" onClick={() => setShowForm(false)} className="btn bg-gray-100 text-gray-700 hover:bg-gray-200 flex-1">Cancel</button>
@@ -139,6 +202,7 @@ const ProjectsPage = () => {
       )}
 
       <ConfirmDialog open={!!deleteId} title="Delete Project" message="This will delete the project and all its versions and test cases. Are you sure?" onConfirm={handleDelete} onCancel={() => setDeleteId(null)} />
+      <ConfirmDialog open={!!removeMemberId} title={t('members.removeMember')} message="Remove this member from the project?" onConfirm={handleRemoveMember} onCancel={() => setRemoveMemberId(null)} />
     </div>
   );
 };

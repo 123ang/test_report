@@ -18,7 +18,9 @@
     "loginButton": "Sign In",
     "registerButton": "Sign Up",
     "noAccount": "Don't have an account?",
-    "haveAccount": "Already have an account?"
+    "haveAccount": "Already have an account?",
+    "invalidCredentials": "Invalid email or password. Please try again.",
+    "loginFailed": "Login failed"
   },
   "testCase": {
     "title": "Title",
@@ -106,5 +108,19 @@
     "no": "No",
     "actions": "Actions",
     "search": "Search"
+  },
+  "members": {
+    "title": "Members",
+    "addMember": "Add Member",
+    "removeMember": "Remove Member",
+    "email": "Email",
+    "inviteByEmail": "Invite by Email",
+    "addButton": "Add",
+    "noMembers": "No members yet",
+    "userNotRegistered": "User not registered. Please ask them to create an account first.",
+    "alreadyMember": "User is already a member",
+    "alreadyOwner": "You are already the owner",
+    "memberAdded": "Member added successfully",
+    "memberRemoved": "Member removed successfully"
   }
 }

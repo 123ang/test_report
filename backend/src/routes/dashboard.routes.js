@@ -7,12 +7,21 @@ const prisma = new PrismaClient();
 
 router.use(authMiddleware);
 
-// Summary stats (optional projectId filter)
+// Summary stats (only current user's accessible projects; optional projectId filter)
 router.get('/summary', async (req, res, next) => {
   try {
     const { projectId } = req.query;
-    const where = {};
-    if (projectId) where.version = { projectId: parseInt(projectId) };
+    const where = {
+      version: {
+        project: {
+          OR: [
+            { createdById: req.user.id },
+            { members: { some: { userId: req.user.id } } },
+          ],
+        },
+      },
+    };
+    if (projectId) where.version.projectId = parseInt(projectId);
 
     const [total, open, fixed, verified] = await Promise.all([
       prisma.testCase.count({ where }),
@@ -34,15 +43,25 @@ router.get('/summary', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// Trends over time
+// Trends over time (only current user's accessible projects)
 router.get('/trends', async (req, res, next) => {
   try {
     const { days = 30, projectId } = req.query;
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - parseInt(days));
 
-    const where = { createdAt: { gte: startDate } };
-    if (projectId) where.version = { projectId: parseInt(projectId) };
+    const where = {
+      createdAt: { gte: startDate },
+      version: {
+        project: {
+          OR: [
+            { createdById: req.user.id },
+            { members: { some: { userId: req.user.id } } },
+          ],
+        },
+      },
+    };
+    if (projectId) where.version.projectId = parseInt(projectId);
 
     const testCases = await prisma.testCase.findMany({ where, select: { createdAt: true, status: true }, orderBy: { createdAt: 'asc' } });
 
@@ -58,10 +77,16 @@ router.get('/trends', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// Stats by project
+// Stats by project (only current user's accessible projects)
 router.get('/by-project', async (req, res, next) => {
   try {
     const projects = await prisma.project.findMany({
+      where: {
+        OR: [
+          { createdById: req.user.id },
+          { members: { some: { userId: req.user.id } } },
+        ],
+      },
       include: { versions: { include: { testCases: { select: { status: true, severity: true } } } } },
     });
 
@@ -78,12 +103,21 @@ router.get('/by-project', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// Recent test cases
+// Recent test cases (only current user's accessible projects)
 router.get('/recent', async (req, res, next) => {
   try {
     const { limit = 10, projectId } = req.query;
-    const where = {};
-    if (projectId) where.version = { projectId: parseInt(projectId) };
+    const where = {
+      version: {
+        project: {
+          OR: [
+            { createdById: req.user.id },
+            { members: { some: { userId: req.user.id } } },
+          ],
+        },
+      },
+    };
+    if (projectId) where.version.projectId = parseInt(projectId);
 
     const recent = await prisma.testCase.findMany({
       where,

@@ -21,4 +21,12 @@ export const projectService = {
     const res = await api.delete(`/projects/${id}`);
     return res.data;
   },
+  async addMember(projectId, email) {
+    const res = await api.post(`/projects/${projectId}/members`, { email });
+    return res.data;
+  },
+  async removeMember(projectId, memberId) {
+    const res = await api.delete(`/projects/${projectId}/members/${memberId}`);
+    return res.data;
+  },
 };

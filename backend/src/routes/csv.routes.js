@@ -10,13 +10,22 @@ const prisma = new PrismaClient();
 
 router.use(authMiddleware);
 
-// Export test cases as CSV (optional versionId or projectId filter)
+// Export test cases as CSV (only accessible projects; optional versionId or projectId filter)
 router.get('/export', async (req, res, next) => {
   try {
     const { versionId, projectId } = req.query;
-    const where = {};
+    const where = {
+      version: {
+        project: {
+          OR: [
+            { createdById: req.user.id },
+            { members: { some: { userId: req.user.id } } },
+          ],
+        },
+      },
+    };
     if (versionId) where.versionId = parseInt(versionId);
-    if (projectId) where.version = { projectId: parseInt(projectId) };
+    if (projectId) where.version.projectId = parseInt(projectId);
 
     const testCases = await prisma.testCase.findMany({
       where,
@@ -54,11 +63,24 @@ router.get('/export', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
-// Import test cases from CSV
+// Import test cases from CSV (only into a version in accessible project)
 router.post('/import', express.text({ type: 'text/csv', limit: '10mb' }), async (req, res, next) => {
   try {
     const { versionId } = req.query;
     if (!versionId) return res.status(400).json({ error: 'versionId query param is required' });
+
+    const version = await prisma.version.findFirst({
+      where: {
+        id: parseInt(versionId),
+        project: {
+          OR: [
+            { createdById: req.user.id },
+            { members: { some: { userId: req.user.id } } },
+          ],
+        },
+      },
+    });
+    if (!version) return res.status(404).json({ error: 'Version not found' });
 
     const lines = req.body.split('\n').filter(l => l.trim());
     if (lines.length < 2) return res.status(400).json({ error: 'CSV must have a header row and at least one data row' });

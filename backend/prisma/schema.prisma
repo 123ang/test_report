@@ -8,30 +8,44 @@ datasource db {
 }
 
 model User {
-  id            Int        @id @default(autoincrement())
-  name          String
-  email         String     @unique
-  password      String
-  preferredLang String     @default("en") @map("preferred_lang")
-  createdAt     DateTime   @default(now()) @map("created_at")
-  projects      Project[]
-  testCases     TestCase[]
+  id             Int              @id @default(autoincrement())
+  name           String
+  email          String           @unique
+  password       String
+  preferredLang  String           @default("en") @map("preferred_lang")
+  createdAt      DateTime         @default(now()) @map("created_at")
+  projects       Project[]
+  testCases      TestCase[]
+  projectMembers ProjectMember[]
 
   @@map("users")
 }
 
 model Project {
-  id          Int       @id @default(autoincrement())
+  id          Int              @id @default(autoincrement())
   name        String
   description String?
-  language    String    @default("en") // en, ja, zh
-  createdBy   User      @relation(fields: [createdById], references: [id])
-  createdById Int       @map("created_by_id")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  language    String           @default("en") // en, ja, zh
+  createdBy   User             @relation(fields: [createdById], references: [id])
+  createdById Int              @map("created_by_id")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
   versions    Version[]
+  members     ProjectMember[]
 
   @@map("projects")
+}
+
+model ProjectMember {
+  id        Int      @id @default(autoincrement())
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId Int      @map("project_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int      @map("user_id")
+  addedAt   DateTime @default(now()) @map("added_at")
+
+  @@unique([projectId, userId])
+  @@map("project_members")
 }
 
 model Version {
