@@ -14,65 +14,69 @@ model User {
   password      String
   preferredLang String     @default("en") @map("preferred_lang")
   createdAt     DateTime   @default(now()) @map("created_at")
+  projects      Project[]
   testCases     TestCase[]
-  testRuns      TestRun[]
 
   @@map("users")
 }
 
+model Project {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  language    String    @default("en") // en, ja, zh
+  createdBy   User      @relation(fields: [createdById], references: [id])
+  createdById Int       @map("created_by_id")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  versions    Version[]
+
+  @@map("projects")
+}
+
+model Version {
+  id          Int        @id @default(autoincrement())
+  project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId   Int        @map("project_id")
+  name        String
+  description String?
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  testCases   TestCase[]
+
+  @@map("versions")
+}
+
 model TestCase {
-  id           Int                    @id @default(autoincrement())
-  appName      String                 @map("app_name")
-  templateKey  String?                @map("template_key")
-  createdBy    User                   @relation(fields: [createdById], references: [id])
-  createdById  Int                    @map("created_by_id")
-  createdAt    DateTime               @default(now()) @map("created_at")
-  updatedAt    DateTime               @updatedAt @map("updated_at")
-  translations TestCaseTranslation[]
-  testRuns     TestRun[]
+  id          Int              @id @default(autoincrement())
+  version     Version          @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  versionId   Int              @map("version_id")
+  bug         String
+  test        String
+  result      String?
+  status      String           @default("Open") // Open, Fixed, Verified
+  isFixed     Boolean          @default(false) @map("is_fixed")
+  isVerified  Boolean          @default(false) @map("is_verified")
+  severity    String           @default("Low") // Critical, High, Medium, Low
+  priority    String           @default("Low") // High, Medium, Low
+  notes       String?
+  createdBy   User             @relation(fields: [createdById], references: [id])
+  createdById Int              @map("created_by_id")
+  testedAt    DateTime?        @map("tested_at")
+  createdAt   DateTime         @default(now()) @map("created_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+  images      TestCaseImage[]
 
   @@map("test_cases")
 }
 
-model TestCaseTranslation {
-  id             Int      @id @default(autoincrement())
-  testCase       TestCase @relation(fields: [testCaseId], references: [id], onDelete: Cascade)
-  testCaseId     Int      @map("test_case_id")
-  language       String
-  title          String
-  description    String?
-  steps          String
-  expectedResult String   @map("expected_result")
-
-  @@unique([testCaseId, language])
-  @@map("test_case_translations")
-}
-
-model TestRun {
-  id           Int            @id @default(autoincrement())
-  testCase     TestCase       @relation(fields: [testCaseId], references: [id], onDelete: Cascade)
-  testCaseId   Int            @map("test_case_id")
-  tester       User           @relation(fields: [testerId], references: [id])
-  testerId     Int            @map("tester_id")
-  status       String
-  actualResult String?        @map("actual_result")
-  environment  String?
-  severity     String?
-  priority     String?
-  notes        String?
-  executedAt   DateTime       @default(now()) @map("executed_at")
-  images       TestRunImage[]
-
-  @@map("test_runs")
-}
-
-model TestRunImage {
+model TestCaseImage {
   id           Int      @id @default(autoincrement())
-  testRun      TestRun  @relation(fields: [testRunId], references: [id], onDelete: Cascade)
-  testRunId    Int      @map("test_run_id")
+  testCase     TestCase @relation(fields: [testCaseId], references: [id], onDelete: Cascade)
+  testCaseId   Int      @map("test_case_id")
   filePath     String   @map("file_path")
   originalName String   @map("original_name")
   uploadedAt   DateTime @default(now()) @map("uploaded_at")
 
-  @@map("test_run_images")
+  @@map("test_case_images")
 }

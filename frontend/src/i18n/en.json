@@ -54,7 +54,11 @@
     "pass": "Pass",
     "fail": "Fail",
     "blocked": "Blocked",
-    "skipped": "Skipped"
+    "skipped": "Skipped",
+    "Open": "Open",
+    "Fixed": "Fixed",
+    "Verified": "Verified",
+    "Closed": "Closed"
   },
   "severity": {
     "critical": "Critical",

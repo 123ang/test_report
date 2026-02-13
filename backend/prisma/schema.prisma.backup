@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int        @id @default(autoincrement())
+  name          String
+  email         String     @unique
+  password      String
+  preferredLang String     @default("en") @map("preferred_lang")
+  createdAt     DateTime   @default(now()) @map("created_at")
+  testCases     TestCase[]
+  testRuns      TestRun[]
+
+  @@map("users")
+}
+
+model TestCase {
+  id           Int                    @id @default(autoincrement())
+  appName      String                 @map("app_name")
+  templateKey  String?                @map("template_key")
+  createdBy    User                   @relation(fields: [createdById], references: [id])
+  createdById  Int                    @map("created_by_id")
+  createdAt    DateTime               @default(now()) @map("created_at")
+  updatedAt    DateTime               @updatedAt @map("updated_at")
+  translations TestCaseTranslation[]
+  testRuns     TestRun[]
+
+  @@map("test_cases")
+}
+
+model TestCaseTranslation {
+  id             Int      @id @default(autoincrement())
+  testCase       TestCase @relation(fields: [testCaseId], references: [id], onDelete: Cascade)
+  testCaseId     Int      @map("test_case_id")
+  language       String
+  title          String
+  description    String?
+  steps          String
+  expectedResult String   @map("expected_result")
+
+  @@unique([testCaseId, language])
+  @@map("test_case_translations")
+}
+
+model TestRun {
+  id           Int            @id @default(autoincrement())
+  testCase     TestCase       @relation(fields: [testCaseId], references: [id], onDelete: Cascade)
+  testCaseId   Int            @map("test_case_id")
+  tester       User           @relation(fields: [testerId], references: [id])
+  testerId     Int            @map("tester_id")
+  status       String
+  actualResult String?        @map("actual_result")
+  environment  String?
+  severity     String?
+  priority     String?
+  notes        String?
+  executedAt   DateTime       @default(now()) @map("executed_at")
+  images       TestRunImage[]
+
+  @@map("test_runs")
+}
+
+model TestRunImage {
+  id           Int      @id @default(autoincrement())
+  testRun      TestRun  @relation(fields: [testRunId], references: [id], onDelete: Cascade)
+  testRunId    Int      @map("test_run_id")
+  filePath     String   @map("file_path")
+  originalName String   @map("original_name")
+  uploadedAt   DateTime @default(now()) @map("uploaded_at")
+
+  @@map("test_run_images")
+}
