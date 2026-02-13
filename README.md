@@ -71,7 +71,7 @@ cd frontend
 npm run dev
 ```
 
-6. Open http://localhost:5173 in your browser
+6. Open http://localhost:3014 in your browser
 
 ## Documentation
 

@@ -2,6 +2,8 @@
 
 Follow these steps in order to run and test the Test Report app on your machine.
 
+**Quick Start with PM2**: If you have PM2 installed, you can use `pm2 start ecosystem.config.cjs` to start both backend and frontend at once. See `PM2_GUIDE.md` for details.
+
 ---
 
 ## Prerequisites
@@ -159,7 +161,7 @@ npm run dev
 
 You should see something like:
 
-- `Local: http://localhost:5173/`
+- `Local: http://localhost:3014/`
 - Vite dev server running
 
 Leave this terminal open. The frontend must keep running.
@@ -169,7 +171,7 @@ Leave this terminal open. The frontend must keep running.
 ## Step 10: Open the app in the browser
 
 1. Open your browser.
-2. Go to: **http://localhost:5173**
+2. Go to: **http://localhost:3014**
 
 You should see the Test Report login (or register) page.
 
@@ -229,7 +231,7 @@ After login you should see the Dashboard. You can then:
 
 **Blank page or API errors in browser**  
 - Ensure both backend (`npm run dev` in `backend`) and frontend (`npm run dev` in `frontend`) are running.  
-- Ensure you use the correct URL (e.g. http://localhost:5173 for the app).
+- Ensure you use the correct URL (e.g. http://localhost:3014 for the app).
 
 ---
 
@@ -237,6 +239,6 @@ After login you should see the Dashboard. You can then:
 
 1. `cd backend` → `npm install` → set `.env` → `npx prisma generate` → `npx prisma migrate dev` → `npm run seed` → `npm run dev`
 2. New terminal: `cd frontend` → `npm install` → (optional) `.env` → `npm run dev`
-3. Open **http://localhost:5173** and log in (e.g. demo@testreport.com / password123).
+3. Open **http://localhost:3014** and log in (e.g. demo@testreport.com / password123).
 
 You’re done. Use this file whenever you want to run and test the app locally.

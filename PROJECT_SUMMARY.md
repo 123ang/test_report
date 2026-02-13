@@ -158,7 +158,7 @@ npm run dev
 ```
 
 4. **Open Browser**
-- Go to `http://localhost:5173`
+- Go to `http://localhost:3014`
 - Login: `demo@testreport.com` / `password123`
 
 ## 📱 Mobile Responsive Design

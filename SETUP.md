@@ -114,11 +114,11 @@ VITE_API_URL=http://localhost:4014/api
 npm run dev
 ```
 
-The app will start on `http://localhost:5173`
+The app will start on `http://localhost:3014`
 
 ## Step 4: Access the Application
 
-1. Open your browser and go to `http://localhost:5173`
+1. Open your browser and go to `http://localhost:3014`
 2. You can either:
    - Register a new account
    - Login with demo account: `demo@testreport.com` / `password123`
