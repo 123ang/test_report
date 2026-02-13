@@ -97,6 +97,8 @@
     "success": "Success",
     "confirm": "Are you sure?",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "actions": "Actions",
+    "search": "Search"
   }
 }

@@ -152,7 +152,7 @@ npm run dev
 
 3. **Frontend** (new terminal)
 ```bash
-cd client
+cd frontend
 npm install
 npm run dev
 ```

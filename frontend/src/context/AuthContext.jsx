@@ -17,12 +17,18 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in
-    const token = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
-    
-    if (token && savedUser) {
-      setUser(JSON.parse(savedUser));
+    // Check if user is logged in (with safe parse in case localStorage is corrupt)
+    try {
+      const token = localStorage.getItem('token');
+      const savedUser = localStorage.getItem('user');
+      
+      if (token && savedUser) {
+        const parsed = JSON.parse(savedUser);
+        if (parsed && typeof parsed === 'object') setUser(parsed);
+      }
+    } catch (e) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
     }
     setLoading(false);
   }, []);
