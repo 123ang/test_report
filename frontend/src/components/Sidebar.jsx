@@ -45,7 +45,7 @@ const Sidebar = ({ onNavigate }) => {
               end={item.to === '/'}
               onClick={onNavigate}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                `flex items-center gap-3 px-4 py-3 min-h-[44px] rounded-lg transition-colors touch-manipulation ${
                   isActive
                     ? 'bg-primary-50 text-primary-700 font-medium'
                     : 'text-gray-700 hover:bg-gray-100'

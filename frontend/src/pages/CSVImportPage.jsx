@@ -47,10 +47,10 @@ const CSVImportPage = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
-      <h1 className="heading-responsive font-bold text-gray-900">{t('csv.import')}</h1>
+    <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6">
+      <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('csv.import')}</h1>
 
-      <div className="card space-y-6">
+      <div className="card p-4 sm:p-6 space-y-6">
         <div>
           <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('csv.downloadTemplate')}</h2>
           <p className="text-gray-600 mb-4">

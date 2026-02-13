@@ -68,20 +68,20 @@ const ProjectDetailPage = () => {
   if (!project) return <div className="text-center py-12 text-gray-500">Project not found</div>;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-gray-500">
+      <div className="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
         <Link to="/projects" className="hover:text-gray-700">Projects</Link>
         <span>/</span>
         <span className="font-medium text-gray-900">{project.name}</span>
       </div>
 
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">{project.name}</h1>
-          {project.description && <p className="text-gray-600 mt-1">{project.description}</p>}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 truncate">{project.name}</h1>
+          {project.description && <p className="text-gray-600 mt-1 text-sm line-clamp-2">{project.description}</p>}
         </div>
-        <button onClick={openCreate} className="btn btn-primary">+ New Version</button>
+        <button onClick={openCreate} className="btn btn-primary w-full sm:w-auto flex-shrink-0">+ New Version</button>
       </div>
 
       {/* Versions list */}
@@ -114,8 +114,8 @@ const ProjectDetailPage = () => {
 
       {/* Create/Edit modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 my-4 sm:my-8" style={{ maxWidth: 'min(28rem, calc(100vw - 1.5rem))' }}>
             <h2 className="text-lg font-semibold mb-4">{editVersion ? 'Edit Version' : 'New Version'}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>

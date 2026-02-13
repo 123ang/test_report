@@ -32,8 +32,8 @@ const Layout = () => {
         )}
 
         {/* Main content */}
-        <main className="flex-1 lg:ml-64 pt-16">
-          <div className="container-responsive py-6">
+        <main className="flex-1 min-w-0 lg:ml-64 pt-16">
+          <div className="container-responsive py-4 sm:py-6">
             <Outlet />
           </div>
         </main>

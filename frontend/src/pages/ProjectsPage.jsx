@@ -67,10 +67,10 @@ const ProjectsPage = () => {
   if (loading) return <Loading />;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
-        <button onClick={openCreate} className="btn btn-primary">+ New Project</button>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Projects</h1>
+        <button onClick={openCreate} className="btn btn-primary w-full sm:w-auto">+ New Project</button>
       </div>
 
       {/* Project cards */}
@@ -107,8 +107,8 @@ const ProjectsPage = () => {
 
       {/* Create/Edit modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 my-4 sm:my-8" style={{ maxWidth: 'min(28rem, calc(100vw - 1.5rem))' }}>
             <h2 className="text-lg font-semibold mb-4">{editProject ? 'Edit Project' : 'New Project'}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>

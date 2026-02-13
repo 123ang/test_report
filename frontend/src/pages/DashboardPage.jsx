@@ -48,32 +48,32 @@ const DashboardPage = () => {
   ].filter(d => d.value > 0) : [];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <h1 className="text-2xl font-bold text-gray-900">{t('dashboard.title')}</h1>
-        <select value={selectedProject} onChange={e => setSelectedProject(e.target.value)} className="input w-auto">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('dashboard.title')}</h1>
+        <select value={selectedProject} onChange={e => setSelectedProject(e.target.value)} className="input w-full sm:w-auto max-w-xs">
           <option value="">All Projects</option>
           {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
         </select>
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="card">
-          <p className="text-sm text-gray-500">Total</p>
-          <p className="text-3xl font-bold text-gray-900 mt-1">{summary?.total || 0}</p>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="card p-4 sm:p-6">
+          <p className="text-xs sm:text-sm text-gray-500">Total</p>
+          <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1">{summary?.total || 0}</p>
         </div>
-        <div className="card">
-          <p className="text-sm text-gray-500">Open</p>
-          <p className="text-3xl font-bold text-yellow-600 mt-1">{summary?.byStatus.open || 0}</p>
+        <div className="card p-4 sm:p-6">
+          <p className="text-xs sm:text-sm text-gray-500">Open</p>
+          <p className="text-2xl sm:text-3xl font-bold text-yellow-600 mt-1">{summary?.byStatus.open || 0}</p>
         </div>
-        <div className="card">
-          <p className="text-sm text-gray-500">Fixed</p>
-          <p className="text-3xl font-bold text-blue-600 mt-1">{summary?.byStatus.fixed || 0}</p>
+        <div className="card p-4 sm:p-6">
+          <p className="text-xs sm:text-sm text-gray-500">Fixed</p>
+          <p className="text-2xl sm:text-3xl font-bold text-blue-600 mt-1">{summary?.byStatus.fixed || 0}</p>
         </div>
-        <div className="card">
-          <p className="text-sm text-gray-500">Verified</p>
-          <p className="text-3xl font-bold text-green-600 mt-1">{summary?.byStatus.verified || 0}</p>
+        <div className="card p-4 sm:p-6">
+          <p className="text-xs sm:text-sm text-gray-500">Verified</p>
+          <p className="text-2xl sm:text-3xl font-bold text-green-600 mt-1">{summary?.byStatus.verified || 0}</p>
         </div>
       </div>
 
@@ -82,7 +82,7 @@ const DashboardPage = () => {
         <div className="card">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Status Distribution</h2>
           {pieData.length > 0 ? (
-            <ResponsiveContainer width="100%" height={250}>
+            <ResponsiveContainer width="100%" height={220}>
               <PieChart>
                 <Pie data={pieData} cx="50%" cy="50%" outerRadius={90} dataKey="value" label={({ name, value }) => `${name}: ${value}`}>
                   {pieData.map((d, i) => <Cell key={i} fill={d.color} />)}
@@ -97,10 +97,10 @@ const DashboardPage = () => {
         <div className="card">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">By Project</h2>
           {projectStats.length > 0 ? (
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={projectStats}>
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={projectStats} margin={{ top: 5, right: 5, left: -10, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="projectName" tick={{ fontSize: 12 }} />
+                <XAxis dataKey="projectName" tick={{ fontSize: 10 }} />
                 <YAxis />
                 <Tooltip />
                 <Legend />

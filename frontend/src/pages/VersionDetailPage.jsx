@@ -167,7 +167,7 @@ const VersionDetailPage = () => {
   const tcs = version.testCases || [];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-gray-500 flex-wrap">
         <Link to="/projects" className="hover:text-gray-700">Projects</Link>
@@ -178,16 +178,16 @@ const VersionDetailPage = () => {
       </div>
 
       {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">{version.project?.name} — {version.name}</h1>
-          {version.description && <p className="text-gray-600 mt-1">{version.description}</p>}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 leading-tight">{version.project?.name} — {version.name}</h1>
+          {version.description && <p className="text-gray-600 mt-1 text-sm line-clamp-2">{version.description}</p>}
           <p className="text-sm text-gray-400 mt-1">{tcs.length} test case(s)</p>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex flex-wrap gap-2 flex-shrink-0">
           <button onClick={openCreate} className="btn btn-primary">+ New Test Case</button>
-          <button onClick={handleExport} className="btn bg-gray-100 text-gray-700 hover:bg-gray-200">Export CSV</button>
-          <label className="btn bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer">
+          <button onClick={handleExport} className="btn bg-gray-100 text-gray-700 hover:bg-gray-200 text-sm">Export CSV</button>
+          <label className="btn bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer text-sm">
             Import CSV
             <input type="file" accept=".csv" onChange={handleImport} className="hidden" />
           </label>
@@ -195,9 +195,9 @@ const VersionDetailPage = () => {
       </div>
 
       {/* Test cases table */}
-      <div className="card overflow-x-auto">
+      <div className="card overflow-x-auto -mx-4 sm:mx-0 px-0 sm:px-6">
         {tcs.length > 0 ? (
-          <table className="w-full text-sm">
+          <table className="w-full text-sm min-w-[640px]">
             <thead>
               <tr className="border-b border-gray-200 text-left">
                 <th className="py-3 px-3 font-medium text-gray-500 w-16">ID</th>
@@ -217,7 +217,7 @@ const VersionDetailPage = () => {
                 <tr key={tc.id} className="border-b border-gray-50 hover:bg-gray-50">
                   <td className="py-3 px-3 text-gray-400 font-mono text-xs">{tc.id}</td>
                   <td className="py-3 px-3 font-semibold text-gray-900">{tc.bug}</td>
-                  <td className="py-3 px-3 text-gray-700 max-w-[200px] truncate">{tc.test}</td>
+                  <td className="py-3 px-2 sm:px-3 text-gray-700 max-w-[120px] sm:max-w-[200px] truncate">{tc.test}</td>
                   <td className="py-3 px-3 text-gray-600 hidden lg:table-cell max-w-[180px] truncate">{tc.result || '—'}</td>
                   <td className="py-3 px-3 text-gray-500 hidden md:table-cell whitespace-nowrap">
                     {new Date(tc.createdAt).toLocaleDateString()}
@@ -291,8 +291,8 @@ const VersionDetailPage = () => {
             </tbody>
           </table>
         ) : (
-          <div className="text-center py-12 text-gray-500">
-            <p className="mb-4">No test cases yet.</p>
+          <div className="text-center py-8 sm:py-12 text-gray-500 px-4">
+            <p className="mb-4 text-sm sm:text-base">No test cases yet.</p>
             <button onClick={openCreate} className="btn btn-primary">+ New Test Case</button>
           </div>
         )}
@@ -300,10 +300,11 @@ const VersionDetailPage = () => {
 
       {/* Create/Edit modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-xl shadow-xl max-w-lg w-full p-6 my-8">
-            <h2 className="text-lg font-semibold mb-4">{editTC ? 'Edit Test Case' : 'New Test Case'}</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-lg max-h-[90vh] flex flex-col my-4 sm:my-8" style={{ maxWidth: 'min(32rem, calc(100vw - 1.5rem))' }}>
+            <h2 className="text-lg font-semibold flex-shrink-0 p-6 pb-0">{editTC ? 'Edit Test Case' : 'New Test Case'}</h2>
+            <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0 p-6">
+              <div className="space-y-4 overflow-y-auto flex-1 min-h-0 pr-1">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Bug / Category *</label>
                 <input type="text" required value={form.bug} onChange={e => setForm({ ...form, bug: e.target.value })}
@@ -422,7 +423,8 @@ const VersionDetailPage = () => {
                 </label>
               </div>
 
-              <div className="flex gap-3 pt-2">
+              </div>
+              <div className="flex gap-3 pt-4 flex-shrink-0 border-t border-gray-100 mt-4 pt-4">
                 <button type="submit" disabled={uploading} className="btn btn-primary flex-1">
                   {uploading ? 'Uploading...' : (editTC ? 'Save' : 'Create')}
                 </button>
@@ -435,8 +437,8 @@ const VersionDetailPage = () => {
 
       {/* Image Gallery Modal */}
       {viewImages && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto" onClick={() => setViewImages(null)}>
-          <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full p-6 my-8" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto" onClick={() => setViewImages(null)}>
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-4 sm:p-6 my-4 sm:my-8" style={{ maxWidth: 'min(42rem, calc(100vw - 1.5rem))' }} onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold">Photos — {viewImages.title}</h2>
               <button onClick={() => setViewImages(null)} className="text-gray-400 hover:text-gray-600">
@@ -446,9 +448,9 @@ const VersionDetailPage = () => {
               </button>
             </div>
             {viewImages.images.length === 0 ? (
-              <p className="text-center text-gray-500 py-8">No photos yet.</p>
+              <p className="text-center text-gray-500 py-8 text-sm">No photos yet.</p>
             ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
                 {viewImages.images.map(img => (
                   <div key={img.id} className="relative group">
                     <img
@@ -499,16 +501,17 @@ const VersionDetailPage = () => {
 
       {/* Lightbox */}
       {lightboxImg && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[60] p-4" onClick={() => setLightboxImg(null)}>
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[60] p-2 sm:p-4" onClick={() => setLightboxImg(null)}>
           <img
             src={lightboxImg}
             alt="Full size"
-            className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
+            className="max-w-full max-h-[85vh] sm:max-h-[90vh] object-contain rounded-lg shadow-2xl"
             onClick={e => e.stopPropagation()}
           />
           <button
             onClick={() => setLightboxImg(null)}
-            className="absolute top-4 right-4 bg-white/20 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl hover:bg-white/40 transition-colors"
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white/20 text-white rounded-full w-10 h-10 min-h-[44px] min-w-[44px] flex items-center justify-center text-xl hover:bg-white/40 transition-colors touch-manipulation"
+            aria-label="Close"
           >
             &times;
           </button>
