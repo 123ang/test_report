@@ -633,7 +633,7 @@ Internet
 │   │  SSL (Let's Encrypt)    │   │
 │   └─────────────────────────┘   │
 │                                 │
-│   /api/*  ──▶  proxy_pass       │──▶  Node.js/Express (port 5000, via PM2)
+│   /api/*  ──▶  proxy_pass       │──▶  Node.js/Express (port 4014, via PM2)
 │   /*      ──▶  serve static     │──▶  React build files (/var/www/test-report/frontend/dist)
 │   /uploads──▶  serve static     │──▶  Uploaded screenshots
 └─────────────────────────────────┘
@@ -667,7 +667,7 @@ server {
 
     # API proxy
     location /api/ {
-        proxy_pass http://127.0.0.1:5000;
+        proxy_pass http://127.0.0.1:4014;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -694,7 +694,7 @@ server {
 DATABASE_URL="postgresql://username:password@localhost:5432/test_report"
 JWT_SECRET="your-secure-random-secret-key"
 JWT_EXPIRES_IN="24h"
-PORT=5000
+PORT=4014
 UPLOAD_DIR="./uploads"
 MAX_FILE_SIZE=5242880
 NODE_ENV="production"

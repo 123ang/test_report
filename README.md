@@ -48,7 +48,7 @@ npm install
 DATABASE_URL="postgresql://username:password@localhost:5432/test_report"
 JWT_SECRET="your-secure-random-secret-key"
 JWT_EXPIRES_IN="24h"
-PORT=5000
+PORT=4014
 ```
 
 4. Run database migrations:

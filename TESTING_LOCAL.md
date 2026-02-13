@@ -97,7 +97,7 @@ npm run dev
 
 You should see:
 
-- `Server is running on http://localhost:5000`
+- `Server is running on http://localhost:4014`
 - No errors in the terminal
 
 Leave this terminal open. The backend must keep running.
@@ -127,7 +127,7 @@ Wait until installation finishes. You should see `node_modules` in `frontend`.
 
 ## Step 8: Frontend – environment (optional)
 
-If your API is not on `http://localhost:5000`, create and edit the frontend env file:
+If your API is not on `http://localhost:4014`, create and edit the frontend env file:
 
 **Windows:**
 ```bash
@@ -142,10 +142,10 @@ cp .env.example .env
 Edit `frontend\.env` and set:
 
 ```
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=http://localhost:4014/api
 ```
 
-If you use the default port 5000, you can skip this step.
+If you use the default port 4014, you can skip this step.
 
 ---
 
@@ -220,8 +220,8 @@ After login you should see the Dashboard. You can then:
 - Run `npm install` again in the folder where you see the error (`backend` or `frontend`).
 
 **“Port 5000 already in use”**  
-- Change `PORT=5000` to another port (e.g. `5001`) in `backend\.env`.  
-- If you change the port, set `VITE_API_URL=http://localhost:5001/api` in `frontend\.env`.
+- Change `PORT=4014` to another port (e.g. `4015`) in `backend\.env`.  
+- If you change the port, set `VITE_API_URL=http://localhost:4015/api` in `frontend\.env`.
 
 **“Can’t reach database”**  
 - Make sure PostgreSQL is running.  

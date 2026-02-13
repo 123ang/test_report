@@ -49,7 +49,7 @@ copy .env.example .env
 DATABASE_URL="postgresql://username:password@localhost:5432/test_report"
 JWT_SECRET="your-secure-random-secret-key-change-this"
 JWT_EXPIRES_IN="24h"
-PORT=5000
+PORT=4014
 UPLOAD_DIR="./uploads"
 MAX_FILE_SIZE=5242880
 NODE_ENV="development"
@@ -81,7 +81,7 @@ This creates:
 npm run dev
 ```
 
-The server will start on `http://localhost:5000`
+The server will start on `http://localhost:4014`
 
 ## Step 3: Frontend Setup
 
@@ -105,7 +105,7 @@ copy .env.example .env
 2. The default configuration should work:
 
 ```env
-VITE_API_URL=http://localhost:5000/api
+VITE_API_URL=http://localhost:4014/api
 ```
 
 ### Start the Frontend Development Server
@@ -200,13 +200,13 @@ If you see "Can't reach database server":
 
 ### Port Already in Use
 
-If port 5000 or 5173 is already in use:
+If port 4014 or 3014 is already in use:
 
 1. Change PORT in `backend/.env`
 2. Update VITE_API_URL in `frontend/.env` accordingly
 3. Or kill the process using the port:
-   - Windows: `netstat -ano | findstr :5000` then `taskkill /PID <pid> /F`
-   - Mac/Linux: `lsof -ti:5000 | xargs kill`
+   - Windows: `netstat -ano | findstr :4014` then `taskkill /PID <pid> /F`
+   - Mac/Linux: `lsof -ti:4014 | xargs kill`
 
 ### Prisma Issues
 
@@ -227,7 +227,7 @@ npx prisma format
 
 If you see CORS errors in the browser console:
 
-1. Ensure backend is running on `http://localhost:5000`
+1. Ensure backend is running on `http://localhost:4014`
 2. Check VITE_API_URL in `frontend/.env`
 3. Restart both servers
 
