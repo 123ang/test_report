@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import enTranslations from '../i18n/en.json';
 import jaTranslations from '../i18n/ja.json';
 import { useAuth } from './AuthContext';

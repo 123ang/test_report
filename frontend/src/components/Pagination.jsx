@@ -1,3 +1,4 @@
+import React from 'react';
 import { useLang } from '../context/LangContext';
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
