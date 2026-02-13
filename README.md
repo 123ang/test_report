@@ -61,6 +61,16 @@ npx prisma db seed
 
 5. Start development servers:
 
+**Option A: Using PM2 (Recommended)**
+
+```bash
+npm install -g pm2
+pm2 start ecosystem.config.cjs
+pm2 logs
+```
+
+**Option B: Manual (Two Terminals)**
+
 ```bash
 # Terminal 1 - Backend
 cd backend
@@ -75,7 +85,12 @@ npm run dev
 
 ## Documentation
 
-See [DEVELOPER.md](./DEVELOPER.md) for detailed documentation.
+- [DEVELOPER.md](./DEVELOPER.md) - Detailed technical documentation
+- [TESTING_LOCAL.md](./TESTING_LOCAL.md) - Step-by-step local testing guide
+- [DEPLOY_VPS.md](./DEPLOY_VPS.md) - Production deployment guide
+- [PM2_GUIDE.md](./PM2_GUIDE.md) - PM2 process manager guide
+- [PM2_QUICK_REFERENCE.md](./PM2_QUICK_REFERENCE.md) - Quick PM2 commands
+- [PORT_CONFIGURATION.md](./PORT_CONFIGURATION.md) - Port setup details
 
 ## License
 

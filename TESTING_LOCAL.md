@@ -242,3 +242,50 @@ After login you should see the Dashboard. You can then:
 3. Open **http://localhost:3014** and log in (e.g. demo@testreport.com / password123).
 
 You’re done. Use this file whenever you want to run and test the app locally.
+
+---
+
+## Alternative: Using PM2 (Optional)
+
+If you have PM2 installed globally, you can manage both services with one command.
+
+### Install PM2 (if not installed)
+
+```bash
+npm install -g pm2
+```
+
+### Start Both Services
+
+```bash
+cd c:\Users\User\Desktop\Website\test_report
+pm2 start ecosystem.config.cjs
+```
+
+This starts both backend (port 4014) and frontend (port 3014).
+
+### Check Status
+
+```bash
+pm2 status
+```
+
+### View Logs
+
+```bash
+pm2 logs
+```
+
+### Stop Services
+
+```bash
+pm2 stop all
+```
+
+### Restart Services
+
+```bash
+pm2 restart all
+```
+
+For more PM2 commands and advanced usage, see **`PM2_GUIDE.md`**.
