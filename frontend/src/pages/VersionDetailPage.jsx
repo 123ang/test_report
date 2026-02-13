@@ -121,9 +121,8 @@ const VersionDetailPage = () => {
   const handleImport = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    const text = await file.text();
     try {
-      const res = await csvService.importTestCases(versionId, text);
+      const res = await csvService.importTestCases(parseInt(versionId), file);
       toast.success(res.message);
       load();
     } catch (err) { toast.error(err.response?.data?.error || 'Import failed'); }

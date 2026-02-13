@@ -8,12 +8,12 @@ datasource db {
 }
 
 model User {
-  id             Int              @id @default(autoincrement())
+  id             Int             @id @default(autoincrement())
   name           String
-  email          String           @unique
+  email          String          @unique
   password       String
-  preferredLang  String           @default("en") @map("preferred_lang")
-  createdAt      DateTime         @default(now()) @map("created_at")
+  preferredLang  String          @default("en") @map("preferred_lang")
+  createdAt      DateTime        @default(now()) @map("created_at")
   projects       Project[]
   testCases      TestCase[]
   projectMembers ProjectMember[]
@@ -22,14 +22,14 @@ model User {
 }
 
 model Project {
-  id          Int              @id @default(autoincrement())
+  id          Int             @id @default(autoincrement())
   name        String
   description String?
-  language    String           @default("en") // en, ja, zh
-  createdBy   User             @relation(fields: [createdById], references: [id])
-  createdById Int              @map("created_by_id")
-  createdAt   DateTime         @default(now()) @map("created_at")
-  updatedAt   DateTime         @updatedAt @map("updated_at")
+  language    String          @default("en") // en, ja, zh
+  createdBy   User            @relation(fields: [createdById], references: [id])
+  createdById Int             @map("created_by_id")
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
   versions    Version[]
   members     ProjectMember[]
 
@@ -62,23 +62,23 @@ model Version {
 }
 
 model TestCase {
-  id          Int              @id @default(autoincrement())
-  version     Version          @relation(fields: [versionId], references: [id], onDelete: Cascade)
-  versionId   Int              @map("version_id")
+  id          Int             @id @default(autoincrement())
+  version     Version         @relation(fields: [versionId], references: [id], onDelete: Cascade)
+  versionId   Int             @map("version_id")
   bug         String
   test        String
   result      String?
-  status      String           @default("Open") // Open, Fixed, Verified
-  isFixed     Boolean          @default(false) @map("is_fixed")
-  isVerified  Boolean          @default(false) @map("is_verified")
-  severity    String           @default("Low") // Critical, High, Medium, Low
-  priority    String           @default("Low") // High, Medium, Low
+  status      String          @default("Open") // Open, Fixed, Verified
+  isFixed     Boolean         @default(false) @map("is_fixed")
+  isVerified  Boolean         @default(false) @map("is_verified")
+  severity    String          @default("Low") // Critical, High, Medium, Low
+  priority    String          @default("Low") // High, Medium, Low
   notes       String?
-  createdBy   User             @relation(fields: [createdById], references: [id])
-  createdById Int              @map("created_by_id")
-  testedAt    DateTime?        @map("tested_at")
-  createdAt   DateTime         @default(now()) @map("created_at")
-  updatedAt   DateTime         @updatedAt @map("updated_at")
+  createdBy   User            @relation(fields: [createdById], references: [id])
+  createdById Int             @map("created_by_id")
+  testedAt    DateTime?       @map("tested_at")
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
   images      TestCaseImage[]
 
   @@map("test_cases")

@@ -12,8 +12,9 @@ export const csvService = {
     link.remove();
     window.URL.revokeObjectURL(url);
   },
-  async importTestCases(versionId, csvText) {
-    const res = await api.post(`/csv/import?versionId=${versionId}`, csvText, {
+  async importTestCases(versionId, file) {
+    const text = await file.text();
+    const res = await api.post(`/csv/import?versionId=${versionId}`, text, {
       headers: { 'Content-Type': 'text/csv' },
     });
     return res.data;

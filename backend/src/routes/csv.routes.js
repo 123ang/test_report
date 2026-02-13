@@ -119,7 +119,7 @@ router.post('/import', express.text({ type: 'text/csv', limit: '10mb' }), async 
 
 // Download CSV template
 router.get('/template', (req, res) => {
-  const template = 'bug,test,result,severity,priority,notes\nLogin Bug,Enter invalid password and check error message,,High,High,\nCart Issue,Add 2 items and verify total,$30 displayed,Medium,Medium,Check rounding\n';
+  const template = 'bug,test,result,severity,priority,notes\n"Login Bug","Enter invalid password and check error message","Error message displays correctly","High","High","Test on both mobile and desktop"\n"Cart Total","Add 2 items ($10 each) and verify total","$20 displayed","Medium","Medium","Check tax calculation"\n"Search Function","Search for product name and verify results","10 results shown","Low","Low",""\n';
   res.setHeader('Content-Type', 'text/csv');
   res.setHeader('Content-Disposition', 'attachment; filename=test-case-template.csv');
   res.send(template);

@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { csvService } from '../services/csvService';
+import { projectService } from '../services/projectService';
+import { versionService } from '../services/versionService';
 import { useLang } from '../context/LangContext';
 import toast from 'react-hot-toast';
 
@@ -9,6 +11,45 @@ const CSVImportPage = () => {
   const navigate = useNavigate();
   const [file, setFile] = useState(null);
   const [importing, setImporting] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [versions, setVersions] = useState([]);
+  const [selectedProject, setSelectedProject] = useState('');
+  const [selectedVersion, setSelectedVersion] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadProjects();
+  }, []);
+
+  useEffect(() => {
+    if (selectedProject) {
+      loadVersions(selectedProject);
+    } else {
+      setVersions([]);
+      setSelectedVersion('');
+    }
+  }, [selectedProject]);
+
+  const loadProjects = async () => {
+    try {
+      const data = await projectService.getAll();
+      setProjects(data);
+    } catch (e) {
+      toast.error('Failed to load projects');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadVersions = async (projectId) => {
+    try {
+      const data = await versionService.getByProject(projectId);
+      setVersions(data);
+      if (data.length > 0) setSelectedVersion(data[0].id.toString());
+    } catch (e) {
+      toast.error('Failed to load versions');
+    }
+  };
 
   const handleDownloadTemplate = async () => {
     try {
@@ -33,12 +74,16 @@ const CSVImportPage = () => {
       toast.error('Please select a file');
       return;
     }
+    if (!selectedVersion) {
+      toast.error('Please select a project and version');
+      return;
+    }
 
     setImporting(true);
     try {
-      const result = await csvService.importTestCases(file);
+      const result = await csvService.importTestCases(parseInt(selectedVersion), file);
       toast.success(result.message);
-      navigate('/test-cases');
+      navigate(`/projects/${selectedProject}/versions/${selectedVersion}`);
     } catch (error) {
       toast.error(error.response?.data?.error || 'Failed to import CSV');
     } finally {
@@ -65,6 +110,46 @@ const CSVImportPage = () => {
         </div>
 
         <div className="border-t border-gray-200 pt-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Select Destination</h2>
+          <p className="text-gray-600 mb-4">
+            Choose which project and version to import the test cases into.
+          </p>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Project *</label>
+              <select 
+                value={selectedProject} 
+                onChange={(e) => setSelectedProject(e.target.value)}
+                className="input w-full"
+                disabled={loading}
+              >
+                <option value="">Select a project...</option>
+                {projects.map(p => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {selectedProject && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Version *</label>
+                <select 
+                  value={selectedVersion} 
+                  onChange={(e) => setSelectedVersion(e.target.value)}
+                  className="input w-full"
+                >
+                  <option value="">Select a version...</option>
+                  {versions.map(v => (
+                    <option key={v.id} value={v.id}>{v.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="border-t border-gray-200 pt-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-2">{t('csv.selectFile')}</h2>
           <p className="text-gray-600 mb-4">
             Select a CSV file to import test cases. The file should follow the template format.
@@ -87,7 +172,7 @@ const CSVImportPage = () => {
 
             <button
               onClick={handleImport}
-              disabled={!file || importing}
+              disabled={!file || !selectedVersion || importing}
               className="btn btn-primary w-full disabled:opacity-50"
             >
               {importing ? t('common.loading') : t('csv.importButton')}
@@ -98,11 +183,12 @@ const CSVImportPage = () => {
         <div className="bg-blue-50 rounded-lg p-4">
           <h3 className="font-medium text-blue-900 mb-2">CSV Format Guidelines:</h3>
           <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
-            <li>Each row represents one translation of a test case</li>
-            <li>Use pipe (|) to separate steps within a cell</li>
-            <li>Language column must be "en" or "ja"</li>
-            <li>At minimum, an English (en) row is required</li>
-            <li>Rows with the same appName + title are grouped as translations</li>
+            <li>Required columns: <strong>bug</strong>, <strong>test</strong></li>
+            <li>Optional columns: <strong>result</strong>, <strong>severity</strong>, <strong>priority</strong>, <strong>notes</strong></li>
+            <li>Severity options: Critical, High, Medium, Low (default: Low)</li>
+            <li>Priority options: High, Medium, Low (default: Low)</li>
+            <li>All test cases will be imported into the selected version</li>
+            <li>Use the template as a reference for proper formatting</li>
           </ul>
         </div>
       </div>

@@ -30,6 +30,8 @@ chmod +x deploy.sh   # only needed once
 
 This will: pull latest code, install backend and frontend dependencies, run Prisma migrations, build the frontend, and restart the PM2 backend. See `deploy.sh` in the repo for the exact steps.
 
+**If your VPS database is still on an old schema (e.g. "version 1"):** see **[VPS_DATABASE_MIGRATION.md](./VPS_DATABASE_MIGRATION.md)** for how to bring it up to the current schema. You can also run `./migrate-vps.sh` after `git pull` to apply migrations and restart the backend.
+
 ---
 
 ## Prerequisites
