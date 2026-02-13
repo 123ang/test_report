@@ -11,6 +11,8 @@
     "register": "Register",
     "email": "Email",
     "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "passwordMismatch": "Passwords do not match",
     "name": "Name",
     "preferredLanguage": "Preferred Language",
     "loginButton": "Sign In",

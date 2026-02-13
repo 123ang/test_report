@@ -7,15 +7,22 @@ const RegisterPage = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [preferredLang, setPreferredLang] = useState('en');
   const [loading, setLoading] = useState(false);
-  
+  const [matchError, setMatchError] = useState('');
+
   const { register } = useAuth();
   const { t } = useLang();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMatchError('');
+    if (password !== confirmPassword) {
+      setMatchError(t('auth.passwordMismatch'));
+      return;
+    }
     setLoading(true);
 
     try {
@@ -87,6 +94,28 @@ const RegisterPage = () => {
                 autoComplete="new-password"
                 minLength={6}
               />
+            </div>
+
+            <div>
+              <label htmlFor="confirmPassword" className="label">
+                {t('auth.confirmPassword')}
+              </label>
+              <input
+                id="confirmPassword"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                  if (matchError) setMatchError('');
+                }}
+                className={`input ${matchError ? 'border-red-500' : ''}`}
+                required
+                autoComplete="new-password"
+                minLength={6}
+              />
+              {matchError && (
+                <p className="text-sm text-red-600 mt-1">{matchError}</p>
+              )}
             </div>
 
             <div>
