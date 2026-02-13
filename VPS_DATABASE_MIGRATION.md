@@ -53,14 +53,25 @@ then use one of the following.
 
 ### 2A – Database already has current tables, but Prisma doesn’t know
 
-If the VPS DB **already has** the right tables (users, projects, versions, test_cases, test_case_images) but Prisma never recorded the first migration:
+If the VPS DB **already has** the right tables (users, projects, versions, test_cases, test_case_images) but Prisma never recorded the first migration, or you see:
 
-1. SSH and go to project:
+- **P3018** – “A migration failed to apply”
+- **42P07** – `relation "users" already exists`
+
+then the DB is already at that schema; you only need to baseline and apply the rest.
+
+1. SSH and go to backend:
    ```bash
    cd /root/projects/test_report/backend
    ```
 
-2. Mark the first migration as already applied (baseline):
+2. If the first migration **failed** (P3018), clear the failure state, then mark it as applied:
+   ```bash
+   npx prisma migrate resolve --rolled-back 20260213170000_initial_with_images
+   npx prisma migrate resolve --applied 20260213170000_initial_with_images
+   ```
+
+   If you never ran migrate before and just need to baseline:
    ```bash
    npx prisma migrate resolve --applied 20260213170000_initial_with_images
    ```
@@ -79,29 +90,47 @@ If the VPS DB **already has** the right tables (users, projects, versions, test_
 
 ### 2B – Fresh database (empty or you can wipe it)
 
-If you can **start from an empty database** (no important production data, or you have a backup):
+If you can **start from an empty database** (no important production data, or you have a backup), you can **reset all tables, re-apply migrations, and seed** in one go.
 
-1. On VPS, connect to PostgreSQL and drop/recreate the database (replace `test_report` and user if different):
+**Option 2B-1 – Reset script (recommended, from project backend)**
+
+From the **backend** directory on the VPS:
+
+```bash
+cd /root/projects/test_report/backend
+chmod +x scripts/reset-and-seed.sh   # only needed once
+./scripts/reset-and-seed.sh
+```
+
+This script: drops the `public` schema (all tables), runs `prisma migrate deploy`, then runs the seed.
+
+If you get **permission denied to drop schema**, run the reset SQL as the `postgres` user, then migrate and seed as your app user:
+```bash
+sudo -u postgres psql -d test_report -f /root/projects/test_report/backend/prisma/reset-schema.sql
+cd /root/projects/test_report/backend
+npx prisma migrate deploy
+node prisma/seed.js
+```
+
+**Option 2B-2 – Drop and recreate the database**
+
+1. On VPS, as PostgreSQL superuser (replace `test_report` and `your_db_user` if different):
    ```bash
    sudo -u postgres psql -c "DROP DATABASE IF EXISTS test_report;"
    sudo -u postgres psql -c "CREATE DATABASE test_report OWNER your_db_user;"
    ```
 
-2. Ensure `backend/.env` on VPS has the correct `DATABASE_URL` for this DB.
+2. Ensure `backend/.env` has the correct `DATABASE_URL` for this DB.
 
-3. Run migrations:
+3. Run migrations and seed:
    ```bash
    cd /root/projects/test_report/backend
    npx prisma migrate deploy
    npx prisma generate
+   node prisma/seed.js
    ```
 
-4. (Optional) Seed demo data:
-   ```bash
-   npm run seed
-   ```
-
-5. Restart backend:
+4. Restart backend:
    ```bash
    cd ..
    pm2 restart ecosystem.production.config.cjs
