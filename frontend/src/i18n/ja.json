@@ -1,0 +1,102 @@
+{
+  "nav": {
+    "dashboard": "ダッシュボード",
+    "testCases": "テストケース",
+    "testRuns": "テスト実行",
+    "import": "CSVインポート",
+    "logout": "ログアウト"
+  },
+  "auth": {
+    "login": "ログイン",
+    "register": "登録",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "name": "名前",
+    "preferredLanguage": "優先言語",
+    "loginButton": "サインイン",
+    "registerButton": "サインアップ",
+    "noAccount": "アカウントをお持ちでないですか？",
+    "haveAccount": "既にアカウントをお持ちですか？"
+  },
+  "testCase": {
+    "title": "タイトル",
+    "description": "説明",
+    "steps": "手順",
+    "expectedResult": "期待結果",
+    "appName": "アプリ名",
+    "template": "テンプレート",
+    "create": "テストケース作成",
+    "edit": "テストケース編集",
+    "delete": "テストケース削除",
+    "execute": "テスト実行",
+    "search": "テストケースを検索...",
+    "noResults": "テストケースが見つかりません",
+    "createdBy": "作成者",
+    "createdAt": "作成日",
+    "totalRuns": "実行回数"
+  },
+  "testRun": {
+    "status": "ステータス",
+    "actualResult": "実際の結果",
+    "environment": "環境",
+    "severity": "重要度",
+    "priority": "優先度",
+    "notes": "備考",
+    "screenshots": "スクリーンショット",
+    "tester": "テスター",
+    "executedAt": "実行日時",
+    "uploadScreenshots": "スクリーンショットをアップロード",
+    "noResults": "テスト実行が見つかりません"
+  },
+  "status": {
+    "pass": "合格",
+    "fail": "不合格",
+    "blocked": "ブロック",
+    "skipped": "スキップ"
+  },
+  "severity": {
+    "critical": "致命的",
+    "major": "重大",
+    "minor": "軽微",
+    "trivial": "些細"
+  },
+  "priority": {
+    "high": "高",
+    "medium": "中",
+    "low": "低"
+  },
+  "dashboard": {
+    "title": "ダッシュボード",
+    "summary": "概要",
+    "trends": "トレンド",
+    "byApp": "アプリケーション別",
+    "recentActivity": "最近のアクティビティ",
+    "total": "総テスト数",
+    "passRate": "合格率"
+  },
+  "csv": {
+    "import": "CSVインポート",
+    "export": "CSVエクスポート",
+    "downloadTemplate": "テンプレートダウンロード",
+    "selectFile": "CSVファイルを選択",
+    "importButton": "インポート",
+    "exportTestCases": "テストケースをエクスポート",
+    "exportTestRuns": "テスト実行をエクスポート"
+  },
+  "common": {
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "edit": "編集",
+    "view": "表示",
+    "back": "戻る",
+    "next": "次へ",
+    "previous": "前へ",
+    "loading": "読み込み中...",
+    "error": "エラー",
+    "success": "成功",
+    "confirm": "よろしいですか？",
+    "yes": "はい",
+    "no": "いいえ"
+  }
+}

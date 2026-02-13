@@ -1,0 +1,102 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "testCases": "Test Cases",
+    "testRuns": "Test Runs",
+    "import": "Import CSV",
+    "logout": "Logout"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "preferredLanguage": "Preferred Language",
+    "loginButton": "Sign In",
+    "registerButton": "Sign Up",
+    "noAccount": "Don't have an account?",
+    "haveAccount": "Already have an account?"
+  },
+  "testCase": {
+    "title": "Title",
+    "description": "Description",
+    "steps": "Steps",
+    "expectedResult": "Expected Result",
+    "appName": "App Name",
+    "template": "Template",
+    "create": "Create Test Case",
+    "edit": "Edit Test Case",
+    "delete": "Delete Test Case",
+    "execute": "Execute Test",
+    "search": "Search test cases...",
+    "noResults": "No test cases found",
+    "createdBy": "Created By",
+    "createdAt": "Created At",
+    "totalRuns": "Total Runs"
+  },
+  "testRun": {
+    "status": "Status",
+    "actualResult": "Actual Result",
+    "environment": "Environment",
+    "severity": "Severity",
+    "priority": "Priority",
+    "notes": "Notes",
+    "screenshots": "Screenshots",
+    "tester": "Tester",
+    "executedAt": "Executed At",
+    "uploadScreenshots": "Upload Screenshots",
+    "noResults": "No test runs found"
+  },
+  "status": {
+    "pass": "Pass",
+    "fail": "Fail",
+    "blocked": "Blocked",
+    "skipped": "Skipped"
+  },
+  "severity": {
+    "critical": "Critical",
+    "major": "Major",
+    "minor": "Minor",
+    "trivial": "Trivial"
+  },
+  "priority": {
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "summary": "Summary",
+    "trends": "Trends",
+    "byApp": "By Application",
+    "recentActivity": "Recent Activity",
+    "total": "Total Tests",
+    "passRate": "Pass Rate"
+  },
+  "csv": {
+    "import": "Import CSV",
+    "export": "Export CSV",
+    "downloadTemplate": "Download Template",
+    "selectFile": "Select CSV File",
+    "importButton": "Import",
+    "exportTestCases": "Export Test Cases",
+    "exportTestRuns": "Export Test Runs"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "confirm": "Are you sure?",
+    "yes": "Yes",
+    "no": "No"
+  }
+}
