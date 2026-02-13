@@ -54,7 +54,11 @@
     "pass": "合格",
     "fail": "不合格",
     "blocked": "ブロック",
-    "skipped": "スキップ"
+    "skipped": "スキップ",
+    "Open": "未対応",
+    "Fixed": "修正済み",
+    "Verified": "確認済み",
+    "Closed": "クローズ"
   },
   "severity": {
     "critical": "致命的",
