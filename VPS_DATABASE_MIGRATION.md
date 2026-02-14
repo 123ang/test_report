@@ -18,7 +18,44 @@ chmod +x fix-500-production.sh   # only needed once
 
 This applies any pending migrations (including `project_members`), regenerates the Prisma client, and restarts the backend. Then reload the app and try again.
 
-If **migrate deploy** fails (e.g. “schema is not empty” or “relation already exists”), use the [baseline steps](#2a--database-already-has-current-tables-but-prisma-doesnt-know) below, then run `./fix-500-production.sh` again.
+---
+
+### Error: “The table `public.project_members` does not exist” (P2021)
+
+If the logs show **project_members does not exist** and `fix-500-production.sh` already ran (so `migrate deploy` didn’t create it), create the table manually and tell Prisma it’s applied:
+
+**1. Create the table** (run one of these):
+
+```bash
+cd /root/projects/test_report/backend
+npx prisma db execute --file prisma/add-project-members-table.sql
+```
+
+If that fails (e.g. permission), run as PostgreSQL superuser (replace `test_report` with your DB name):
+
+```bash
+sudo -u postgres psql -d test_report -f /root/projects/test_report/backend/prisma/add-project-members-table.sql
+```
+
+**2. Mark the migration as applied** so future deploys don’t try to create it again:
+
+```bash
+cd /root/projects/test_report/backend
+npx prisma migrate resolve --applied 20260213170100_add_project_collaboration
+```
+
+**3. Restart the backend:**
+
+```bash
+cd /root/projects/test_report
+pm2 restart ecosystem.production.config.cjs
+```
+
+Then reload the app; the 500s should stop.
+
+---
+
+If **migrate deploy** fails for other reasons (e.g. “schema is not empty” or “relation already exists”), use the [baseline steps](#2a--database-already-has-current-tables-but-prisma-doesnt-know) below, then run `./fix-500-production.sh` again.
 
 To see the exact error: `pm2 logs test-report-api` (look for `[API Error]`).
 

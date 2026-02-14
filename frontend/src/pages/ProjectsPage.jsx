@@ -68,7 +68,7 @@ const ProjectsPage = () => {
   };
 
   const handleAddMember = async (e) => {
-    e.preventDefault();
+    if (e?.preventDefault) e.preventDefault();
     if (!memberEmail.trim()) return;
     try {
       await projectService.addMember(editProject.id, memberEmail);
@@ -168,12 +168,13 @@ const ProjectsPage = () => {
               {editProject && isOwner(editProject) && (
                 <div className="border-t pt-4 mt-2">
                   <h3 className="text-sm font-semibold text-gray-900 mb-3">{t('members.title')}</h3>
-                  {/* Add member form */}
-                  <form onSubmit={handleAddMember} className="flex gap-2 mb-3">
+                  {/* Add member - use div + button to avoid nested form (invalid HTML) */}
+                  <div className="flex gap-2 mb-3">
                     <input type="email" value={memberEmail} onChange={e => setMemberEmail(e.target.value)}
+                      onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddMember(e); } }}
                       className="input flex-1 text-sm" placeholder={t('members.email')} />
-                    <button type="submit" className="btn bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-sm px-3">{t('members.addButton')}</button>
-                  </form>
+                    <button type="button" onClick={() => handleAddMember({ preventDefault: () => {} })} className="btn bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-sm px-3">{t('members.addButton')}</button>
+                  </div>
                   {/* Member list */}
                   {editProject.members && editProject.members.length > 0 ? (
                     <div className="space-y-2">
