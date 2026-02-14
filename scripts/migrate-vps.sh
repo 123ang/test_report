@@ -1,15 +1,12 @@
 #!/usr/bin/env bash
 # Run database migrations on VPS (production).
-# Usage: ./migrate-vps.sh
-# Run from project root: cd /root/projects/test_report && ./migrate-vps.sh
-#
-# If you get "schema is not empty" or migration errors, see VPS_DATABASE_MIGRATION.md
-# and consider: cd backend && npx prisma migrate resolve --applied 20260213170000_initial_with_images
+# Usage: ./scripts/migrate-vps.sh   (run from project root)
+# If you get migration errors, see docs/DEPLOYMENT.md
 
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT_DIR"
 
 echo "=========================================="
 echo "  Test Report – VPS database migration"

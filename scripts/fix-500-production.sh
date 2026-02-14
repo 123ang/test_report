@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 # Fix 500 errors on /api/projects and /api/dashboard (e.g. after schema changes).
-# Ensures migrations are applied, Prisma client is current, and backend is restarted.
-# Run from project root on VPS: ./fix-500-production.sh
+# Run from project root: ./scripts/fix-500-production.sh
 
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT_DIR"
 
 echo "=========================================="
 echo "  Fix 500 – apply migrations & restart"

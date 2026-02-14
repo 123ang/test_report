@@ -1,4 +1,4 @@
-# Test Report — Developer Documentation
+# Test Report — Development & API
 
 ## Table of Contents
 
@@ -13,7 +13,7 @@
 - [Frontend Pages](#frontend-pages)
 - [Authentication](#authentication)
 - [File Uploads](#file-uploads)
-- [Deployment](#deployment)
+- [Deployment](DEPLOYMENT.md)
 - [Development TODO](#development-todo)
 
 ---
@@ -65,7 +65,8 @@
 
 ```
 test_report/
-├── DEVELOPER.md                    # This file
+├── docs/                           # Documentation (this file in docs/DEVELOPMENT.md)
+├── scripts/                        # Deploy and DB scripts
 ├── frontend/                      # React frontend (Vite)
 │   ├── public/
 │   ├── src/

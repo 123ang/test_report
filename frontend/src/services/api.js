@@ -37,4 +37,19 @@ api.interceptors.response.use(
   }
 );
 
+/** Returns a user-friendly message for API errors (network, 4xx/5xx). */
+export function getApiErrorMessage(error) {
+  if (!error) return 'Something went wrong';
+  if (error.code === 'ERR_NETWORK' || !error.response) {
+    return 'Cannot reach the server. Make sure the backend is running (e.g. run "npm run dev" in the backend folder, port 4014).';
+  }
+  const status = error.response?.status;
+  const msg = error.response?.data?.error || error.response?.data?.message;
+  if (status === 401) return 'Session expired. Please log in again.';
+  if (msg && typeof msg === 'string') return msg;
+  if (status >= 500) return 'Server error. Try again later.';
+  if (status >= 400) return 'Request failed. Please try again.';
+  return 'Something went wrong.';
+}
+
 export default api;
