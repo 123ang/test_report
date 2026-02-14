@@ -183,6 +183,26 @@ npx prisma migrate status
 
 ---
 
+## 500 after reset (“failed to load projects”)
+
+If you get **500** when loading projects (or “failed to load resource”) right after a reset:
+
+1. **Restart the backend** so it uses the new schema and Prisma client:
+   ```bash
+   cd /root/projects/test_report
+   pm2 restart ecosystem.production.config.cjs
+   ```
+2. **Regenerate Prisma Client** if you didn’t run the full reset script (which now runs `prisma generate`):
+   ```bash
+   cd /root/projects/test_report/backend
+   npx prisma generate
+   ```
+   Then restart again: `pm2 restart ecosystem.production.config.cjs`
+3. **Log in again** – after a reset only the seed user exists. Use **demo@testreport.com** / **password123** (or create a new account).
+4. Check backend logs for the real error: `pm2 logs test-report-api` (look for `GET /projects error:`).
+
+---
+
 ## Quick reference
 
 | Goal | Command (run from `/root/projects/test_report`) |

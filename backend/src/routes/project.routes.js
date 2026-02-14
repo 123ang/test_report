@@ -39,7 +39,10 @@ router.get('/', async (req, res, next) => {
       orderBy: { updatedAt: 'desc' },
     });
     res.json(projects);
-  } catch (e) { next(e); }
+  } catch (e) {
+    console.error('GET /projects error:', e?.message || e);
+    next(e);
+  }
 });
 
 // Get single project with versions (only if owned by or member of)

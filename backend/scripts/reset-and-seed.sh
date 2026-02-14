@@ -15,18 +15,23 @@ echo "  Reset DB: drop schema, migrate, seed"
 echo "=========================================="
 
 echo ""
-echo "[1/3] Dropping public schema (all tables)..."
+echo "[1/4] Dropping public schema (all tables)..."
 npx prisma db execute --file prisma/reset-schema.sql
 
 echo ""
-echo "[2/3] Applying all migrations..."
+echo "[2/4] Applying all migrations..."
 npx prisma migrate deploy
 
 echo ""
-echo "[3/3] Seeding..."
+echo "[3/4] Regenerating Prisma Client..."
+npx prisma generate
+
+echo ""
+echo "[4/4] Seeding..."
 node prisma/seed.js
 
 echo ""
 echo "=========================================="
 echo "  Done. Database reset and seeded."
+echo "  Restart the backend (e.g. pm2 restart ecosystem.production.config.cjs)"
 echo "=========================================="
