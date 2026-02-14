@@ -4,6 +4,26 @@ This guide helps you update your **VPS database** from an older "version 1" stat
 
 ---
 
+## 500 on /api/projects and /api/dashboard (quick fix)
+
+If the live site returns **500** for projects and dashboard (and you’ve already pulled the latest code):
+
+**On the VPS, from the project root:**
+
+```bash
+cd /root/projects/test_report
+chmod +x fix-500-production.sh   # only needed once
+./fix-500-production.sh
+```
+
+This applies any pending migrations (including `project_members`), regenerates the Prisma client, and restarts the backend. Then reload the app and try again.
+
+If **migrate deploy** fails (e.g. “schema is not empty” or “relation already exists”), use the [baseline steps](#2a--database-already-has-current-tables-but-prisma-doesnt-know) below, then run `./fix-500-production.sh` again.
+
+To see the exact error: `pm2 logs test-report-api` (look for `[API Error]`).
+
+---
+
 ## Current migrations (in repo)
 
 Your project has **2 migrations** that must be applied in order:
