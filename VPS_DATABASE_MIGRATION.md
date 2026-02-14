@@ -20,6 +20,24 @@ This applies any pending migrations (including `project_members`), regenerates t
 
 ---
 
+## Nuclear option: remove all tables, recreate, and reseed
+
+If you're okay **wiping all data** and starting fresh (same DB the app uses, correct schema, demo data):
+
+```bash
+cd /root/projects/test_report
+chmod +x reset-db-and-seed.sh   # only once
+./reset-db-and-seed.sh
+```
+
+When prompted, type `y` and Enter. The script will: drop all app tables (no schema drop, so it works when the DB user is not owner of schema `public`), run all migrations, regenerate the Prisma client, run the seed, and restart PM2. Then log in with **demo@testreport.com** / **password123**.
+
+To skip the prompt: `./reset-db-and-seed.sh -y`
+
+If you previously saw **"must be owner of schema public"**: the script now drops tables one by one instead of dropping the schema, so it works with the app's database user.
+
+---
+
 ### Error: “The table `public.project_members` does not exist” (P2021)
 
 If the logs show **project_members does not exist** and `fix-500-production.sh` already ran (so `migrate deploy` didn’t create it), create the table manually and tell Prisma it’s applied:

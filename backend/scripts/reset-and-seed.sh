@@ -15,8 +15,8 @@ echo "  Reset DB: drop schema, migrate, seed"
 echo "=========================================="
 
 echo ""
-echo "[1/4] Dropping public schema (all tables)..."
-npx prisma db execute --file prisma/reset-schema.sql
+echo "[1/4] Dropping all tables (works when app user is not schema owner)..."
+npx prisma db execute --file prisma/reset-schema-drop-tables.sql
 
 echo ""
 echo "[2/4] Applying all migrations..."
