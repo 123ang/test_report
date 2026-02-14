@@ -1,17 +1,13 @@
 #!/usr/bin/env bash
 # Remove all tables, recreate from migrations, and seed the database.
-# Use on VPS or local when you want a clean DB (fixes schema issues, missing tables, etc.).
-#
-# Run from project root:
-#   chmod +x reset-db-and-seed.sh   # only once
-#   ./reset-db-and-seed.sh
-#
+# Use on VPS or local when you want a clean DB.
+# Run from project root: ./scripts/reset-db-and-seed.sh
 # WARNING: This deletes ALL data in the database.
 
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "$SCRIPT_DIR"
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT_DIR"
 
 echo "=========================================="
 echo "  Reset DB: drop all tables, migrate, seed"
@@ -36,7 +32,7 @@ if [ -f backend/scripts/reset-and-seed.sh ]; then
 else
   echo "[1/4] Dropping public schema (all tables)..."
   cd backend
-  npx prisma db execute --file prisma/reset-schema.sql
+  npx prisma db execute --file prisma/reset-schema.sql 2>/dev/null || true
   echo ""
   echo "[2/4] Applying all migrations..."
   npx prisma migrate deploy

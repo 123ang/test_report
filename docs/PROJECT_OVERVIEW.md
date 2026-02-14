@@ -47,14 +47,15 @@ Your **Test Report** web application has been successfully built with all reques
 
 ```
 test_report/
-├── 📄 README.md                    # Project overview
-├── 📄 DEVELOPER.md                 # Comprehensive developer documentation
-├── 📄 SETUP.md                     # Detailed setup instructions
-├── 📄 QUICK_START.md               # 5-minute quick start guide
-├── 📄 PROJECT_SUMMARY.md           # This file
-├── 📄 .gitignore
-│
-├── 📁 backend/                     # Backend application
+├── README.md                       # Project overview
+├── docs/                           # All documentation
+│   ├── SETUP.md                    # Setup & quick start
+│   ├── DEVELOPMENT.md              # Developer & API docs
+│   ├── DEPLOYMENT.md               # VPS deploy & DB migration
+│   ├── PROJECT_OVERVIEW.md         # This file
+│   └── ...
+├── scripts/                        # deploy.sh, fix-500-production.sh, etc.
+├── backend/                     # Backend application
 │   ├── 📁 src/
 │   │   ├── 📁 controllers/         # Business logic
 │   │   │   ├── auth.controller.js

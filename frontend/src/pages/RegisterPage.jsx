@@ -24,7 +24,6 @@ const RegisterPage = () => {
       return;
     }
     setLoading(true);
-
     try {
       await register(name, email, password, preferredLang);
       navigate('/');
@@ -36,24 +35,25 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-8 sm:py-12 overflow-y-auto">
-      <div className="max-w-md w-full my-4">
-        <div className="text-center mb-6 sm:mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-primary-600 rounded-xl mb-4">
-            <svg className="w-8 h-8 sm:w-10 sm:h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-            </svg>
+    <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] px-4 py-12 overflow-y-auto">
+      <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-sky-100/40 blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-slate-100/60 blur-3xl" />
+      </div>
+
+      <div className="relative w-full max-w-[400px] my-4">
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white shadow-sm border border-slate-100/80 p-3 mb-5">
+            <img src="/logo.png" alt="Test Report" className="w-full h-full object-contain" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Test Report</h1>
-          <p className="text-gray-600 mt-2 text-sm sm:text-base">{t('auth.register')}</p>
+          <h1 className="text-2xl font-bold text-slate-800 tracking-tight">Test Report</h1>
+          <p className="text-slate-500 mt-1.5 text-sm">{t('auth.register')}</p>
         </div>
 
-        <div className="card p-4 sm:p-6">
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 sm:p-8">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="name" className="label">
-                {t('auth.name')}
-              </label>
+              <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1.5">{t('auth.name')}</label>
               <input
                 id="name"
                 type="text"
@@ -64,89 +64,42 @@ const RegisterPage = () => {
                 autoComplete="name"
               />
             </div>
-
             <div>
-              <label htmlFor="email" className="label">
-                {t('auth.email')}
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="input"
-                required
-                autoComplete="email"
-              />
+              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">{t('auth.email')}</label>
+              <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="input" required autoComplete="email" />
             </div>
-
             <div>
-              <label htmlFor="password" className="label">
-                {t('auth.password')}
-              </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="input"
-                required
-                autoComplete="new-password"
-                minLength={6}
-              />
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1.5">{t('auth.password')}</label>
+              <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="input" required autoComplete="new-password" minLength={6} />
             </div>
-
             <div>
-              <label htmlFor="confirmPassword" className="label">
-                {t('auth.confirmPassword')}
-              </label>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-slate-700 mb-1.5">{t('auth.confirmPassword')}</label>
               <input
                 id="confirmPassword"
                 type="password"
                 value={confirmPassword}
-                onChange={(e) => {
-                  setConfirmPassword(e.target.value);
-                  if (matchError) setMatchError('');
-                }}
-                className={`input ${matchError ? 'border-red-500' : ''}`}
+                onChange={(e) => { setConfirmPassword(e.target.value); if (matchError) setMatchError(''); }}
+                className={`input ${matchError ? 'border-red-400 focus:ring-red-500/20 focus:border-red-400' : ''}`}
                 required
                 autoComplete="new-password"
                 minLength={6}
               />
-              {matchError && (
-                <p className="text-sm text-red-600 mt-1">{matchError}</p>
-              )}
+              {matchError && <p className="text-sm text-red-600 mt-1">{matchError}</p>}
             </div>
-
             <div>
-              <label htmlFor="preferredLang" className="label">
-                {t('auth.preferredLanguage')}
-              </label>
-              <select
-                id="preferredLang"
-                value={preferredLang}
-                onChange={(e) => setPreferredLang(e.target.value)}
-                className="select"
-              >
+              <label htmlFor="preferredLang" className="block text-sm font-medium text-slate-700 mb-1.5">{t('auth.preferredLanguage')}</label>
+              <select id="preferredLang" value={preferredLang} onChange={(e) => setPreferredLang(e.target.value)} className="select">
                 <option value="en">English</option>
                 <option value="ja">日本語</option>
               </select>
             </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn btn-primary w-full disabled:opacity-50"
-            >
+            <button type="submit" disabled={loading} className="btn btn-primary w-full disabled:opacity-50">
               {loading ? t('common.loading') : t('auth.registerButton')}
             </button>
           </form>
-
-          <p className="text-center text-sm text-gray-600 mt-6">
+          <p className="text-center text-sm text-slate-500 mt-6">
             {t('auth.haveAccount')}{' '}
-            <Link to="/login" className="text-primary-600 hover:text-primary-700 font-medium">
-              {t('auth.login')}
-            </Link>
+            <Link to="/login" className="font-medium text-primary-600 hover:text-primary-700 transition-colors">{t('auth.login')}</Link>
           </p>
         </div>
       </div>

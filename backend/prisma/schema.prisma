@@ -26,6 +26,7 @@ model Project {
   name        String
   description String?
   language    String          @default("en") // en, ja, zh
+  status      String          @default("active") // active, finished
   createdBy   User            @relation(fields: [createdById], references: [id])
   createdById Int             @map("created_by_id")
   createdAt   DateTime        @default(now()) @map("created_at")

@@ -60,7 +60,10 @@ router.get('/:id', async (req, res, next) => {
         createdBy: { select: { id: true, name: true } },
         members: { include: { user: { select: { id: true, name: true, email: true } } } },
         versions: {
-          include: { _count: { select: { testCases: true } } },
+          include: {
+            _count: { select: { testCases: true } },
+            testCases: { select: { status: true } },
+          },
           orderBy: { createdAt: 'desc' },
         },
       },
@@ -73,10 +76,10 @@ router.get('/:id', async (req, res, next) => {
 // Create project
 router.post('/', async (req, res, next) => {
   try {
-    const { name, description, language } = req.body;
+    const { name, description, language, status } = req.body;
     if (!name) return res.status(400).json({ error: 'Name is required' });
     const project = await prisma.project.create({
-      data: { name, description, language: language || 'en', createdById: req.user.id },
+      data: { name, description, language: language || 'en', status: status === 'finished' ? 'finished' : 'active', createdById: req.user.id },
       include: { createdBy: { select: { id: true, name: true } } },
     });
     res.status(201).json(project);
@@ -86,12 +89,17 @@ router.post('/', async (req, res, next) => {
 // Update project (only owner or member can update; only owner can add/remove members)
 router.put('/:id', async (req, res, next) => {
   try {
-    const { name, description, language } = req.body;
+    const { name, description, language, status } = req.body;
     const hasAccess = await canAccessProject(parseInt(req.params.id), req.user.id);
     if (!hasAccess) return res.status(404).json({ error: 'Project not found' });
+    const updateData = {};
+    if (name !== undefined) updateData.name = name;
+    if (description !== undefined) updateData.description = description;
+    if (language !== undefined) updateData.language = language;
+    if (status === 'finished' || status === 'active') updateData.status = status;
     const project = await prisma.project.update({
       where: { id: parseInt(req.params.id) },
-      data: { name, description, language },
+      data: updateData,
       include: { 
         createdBy: { select: { id: true, name: true } },
         members: { include: { user: { select: { id: true, name: true, email: true } } } },
