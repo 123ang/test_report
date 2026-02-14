@@ -26,7 +26,7 @@ const RegisterPage = () => {
     setLoading(true);
     try {
       await register(name, email, password, preferredLang);
-      navigate('/');
+      navigate('/dashboard');
     } catch (error) {
       // Error handled by AuthContext
     } finally {

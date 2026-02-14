@@ -55,7 +55,7 @@ export default function AppShell() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <Link to="/" className="flex items-center gap-2 min-w-0">
+        <Link to="/dashboard" className="flex items-center gap-2 min-w-0">
           <img src="/logo.png" alt="Test Report" className="w-8 h-8 flex-shrink-0 object-contain" />
           <span className="font-semibold text-slate-900 hidden sm:block truncate">Test Report</span>
         </Link>

@@ -23,7 +23,7 @@ const Navbar = ({ onMenuClick }) => {
               </svg>
             </button>
             
-            <Link to="/" className="flex items-center gap-2">
+            <Link to="/dashboard" className="flex items-center gap-2">
               <img src="/logo.png" alt="Test Report" className="w-8 h-8 object-contain" />
               <span className="text-xl font-bold text-gray-900 hidden sm:block">Test Report</span>
             </Link>
