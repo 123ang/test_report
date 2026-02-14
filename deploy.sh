@@ -1,11 +1,17 @@
 #!/usr/bin/env bash
 # Deploy Test Report app (VPS production)
-# Usage: ./scripts/deploy.sh   (run from project root)
-# Or:    cd /root/projects/test_report && ./scripts/deploy.sh
+# Usage: ./deploy.sh   from project root
+# Or:    ./scripts/deploy.sh   (script can live in project root or in scripts/)
 
 set -e
 
-ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# If script is in scripts/ subdir, project root is parent; else script is in project root
+if [ -d "$SCRIPT_DIR/backend" ]; then
+  ROOT_DIR="$SCRIPT_DIR"
+else
+  ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+fi
 cd "$ROOT_DIR"
 
 echo "=========================================="
