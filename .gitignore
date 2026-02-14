@@ -39,8 +39,8 @@ Thumbs.db
 backend/uploads/*
 !backend/uploads/.gitkeep
 
-# Prisma
-backend/prisma/migrations/
+# Prisma (migrations are committed so VPS and others get the same schema)
+# backend/prisma/migrations/
 
 # PM2
 .pm2/
