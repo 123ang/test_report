@@ -230,7 +230,7 @@ const ProjectDetailPage = () => {
                 </span>
               </button>
               {previousVersionsExpanded && (
-                <div className="border-t border-slate-100 p-4 pt-0">
+                <div className="border-t border-slate-100 pt-4 px-4 pb-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                     {previousVersions.map(v => (
                       <div key={v.id} className="rounded-2xl border border-slate-200/80 bg-slate-50/50 p-4 sm:p-6 shadow-sm hover:shadow-md hover:border-primary-200/80 transition-all">

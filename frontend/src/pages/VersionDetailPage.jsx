@@ -244,67 +244,78 @@ export default function VersionDetailPage() {
             </Link>
           ))}
         </nav>
-        <Link
-          to={`/projects/${projectId}`}
-          className="m-2 mt-auto pt-2 border-t border-slate-100 text-sm text-slate-500 hover:text-primary-600"
-        >
-          ← {t('versionDetail.backToProjectBefore')}{version?.project?.name || 'project'}{t('versionDetail.backToProjectAfter')}
-        </Link>
       </aside>
 
       {/* Center: Toolbar + content */}
       <div className="flex-1 flex flex-col min-w-0 bg-[#f8fafc]">
-        {/* Back button + Toolbar */}
-        <div className="flex flex-col gap-3 p-4 border-b border-slate-200/80 bg-white flex-shrink-0 shadow-sm">
+        {/* Back + Toolbar — redesigned */}
+        <div className="flex flex-col gap-4 p-4 sm:p-5 border-b border-slate-200/80 bg-white flex-shrink-0 shadow-sm">
           <Link
             to={`/projects/${projectId}`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-primary-600 w-fit -ml-1 py-1.5 touch-manipulation"
+            className="inline-flex items-center gap-2 w-fit rounded-xl px-3 py-2 text-sm font-medium text-slate-600 hover:text-primary-600 hover:bg-slate-100/80 active:bg-slate-200/80 transition-colors touch-manipulation"
           >
-            <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 flex-shrink-0 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
             <span>{t('versionDetail.backToProjectBefore')}{version?.project?.name || 'project'}{t('versionDetail.backToProjectAfter')}</span>
           </Link>
-          <input
-            type="search"
-            placeholder={t('versionDetail.searchPlaceholder')}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="input py-2.5 text-sm w-full md:max-w-xs"
-          />
-          <div className="flex flex-wrap items-center gap-2">
-            <select
-              value={filterSeverity}
-              onChange={(e) => setFilterSeverity(e.target.value)}
-              className="input py-2 text-sm flex-1 min-w-0 md:flex-none md:w-auto"
-            >
-              <option value="">{t('versionDetail.allSeverities')}</option>
-              <option value="Critical">{t('severity.Critical')}</option>
-              <option value="High">{t('severity.High')}</option>
-              <option value="Medium">{t('severity.Medium')}</option>
-              <option value="Low">{t('severity.Low')}</option>
-            </select>
-            <select
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
-              className="input py-2 text-sm flex-1 min-w-0 md:flex-none md:w-auto"
-            >
-              <option value="">{t('versionDetail.allStatuses')}</option>
-              <option value="Open">{t('status.Open')}</option>
-              <option value="Fixed">{t('status.Fixed')}</option>
-              <option value="Verified">{t('status.Verified')}</option>
-            </select>
-            <div className="hidden md:block flex-1" />
-            <button type="button" onClick={openCreate} className="btn btn-primary text-sm w-full md:w-auto order-first md:order-none">
-              + {t('versionDetail.addBug')}
-            </button>
-            <button type="button" onClick={handleExport} className="btn bg-slate-100 text-slate-700 hover:bg-slate-200 text-sm flex-1 md:flex-none">
-              {t('csv.export')}
-            </button>
-            <label className="btn bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer text-sm flex-1 md:flex-none">
-              {t('csv.import')}
-              <input type="file" accept=".csv" onChange={handleImport} className="hidden" />
-            </label>
+
+          {/* Search — icon + input */}
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            </span>
+            <input
+              type="search"
+              placeholder={t('versionDetail.searchPlaceholder')}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl bg-slate-50/80 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-400 focus:bg-white transition-colors md:max-w-sm"
+            />
+          </div>
+
+          {/* Filters + actions row */}
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-2 flex-1 min-w-0">
+              <select
+                value={filterSeverity}
+                onChange={(e) => setFilterSeverity(e.target.value)}
+                className={`min-w-0 py-2 pl-3 pr-8 text-sm rounded-xl border bg-white font-medium transition-colors appearance-none cursor-pointer bg-no-repeat bg-[length:1.25rem_1.25rem] bg-[right_0.5rem_center] focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-400 ${filterSeverity ? 'border-primary-300 text-primary-700 bg-primary-50/50' : 'border-slate-200 text-slate-700 hover:border-slate-300'}`}
+                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E")` }}
+              >
+                <option value="">{t('versionDetail.allSeverities')}</option>
+                <option value="Critical">{t('severity.Critical')}</option>
+                <option value="High">{t('severity.High')}</option>
+                <option value="Medium">{t('severity.Medium')}</option>
+                <option value="Low">{t('severity.Low')}</option>
+              </select>
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+                className={`min-w-0 py-2 pl-3 pr-8 text-sm rounded-xl border bg-white font-medium transition-colors appearance-none cursor-pointer bg-no-repeat bg-[length:1.25rem_1.25rem] bg-[right_0.5rem_center] focus:outline-none focus:ring-2 focus:ring-primary-500/25 focus:border-primary-400 ${filterStatus ? 'border-primary-300 text-primary-700 bg-primary-50/50' : 'border-slate-200 text-slate-700 hover:border-slate-300'}`}
+                style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E")` }}
+              >
+                <option value="">{t('versionDetail.allStatuses')}</option>
+                <option value="Open">{t('status.Open')}</option>
+                <option value="Fixed">{t('status.Fixed')}</option>
+                <option value="Verified">{t('status.Verified')}</option>
+              </select>
+            </div>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-2 flex-shrink-0">
+              <button type="button" onClick={openCreate} className="btn btn-primary text-sm inline-flex items-center gap-1.5 px-4 py-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                {t('versionDetail.addBug')}
+              </button>
+              <button type="button" onClick={handleExport} className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-colors">
+                <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                {t('csv.export')}
+              </button>
+              <label className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-colors cursor-pointer">
+                <svg className="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                {t('csv.import')}
+                <input type="file" accept=".csv" onChange={handleImport} className="hidden" />
+              </label>
+            </div>
           </div>
         </div>
 
