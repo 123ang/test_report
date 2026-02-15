@@ -34,8 +34,9 @@ const LandingPage = () => {
   const [trustRef, trustInView] = useInView();
   const [ctaRef, ctaInView] = useInView();
 
+  // Avoid overflow-x-hidden on root: it can create a containing block and break position:sticky in the stack section.
   return (
-    <div className="min-h-screen relative overflow-x-hidden">
+    <div className="min-h-screen relative">
       <PageBackground />
       {/* Header */}
       <header className="sticky top-0 z-20 w-full border-b border-brand-navy/8 bg-brand-bg/95 backdrop-blur-sm">
@@ -64,36 +65,51 @@ const LandingPage = () => {
       </header>
 
       <main>
-        {/* 1) Hero */}
-        <section className="relative py-12 md:py-16 lg:py-24 overflow-x-clip">
+        {/* 1) Hero — vertically centered in viewport; overflow-x-clip only here to avoid breaking sticky below */}
+        <section className="relative min-h-[calc(100vh-5rem)] flex flex-col justify-center overflow-x-clip">
           <div className="section-overlay bg-gradient-to-b from-[rgba(111,168,220,0.06)] via-transparent to-transparent" />
-          <div className="max-w-6xl mx-auto px-6 md:px-8">
+          <div className="max-w-6xl mx-auto px-6 md:px-8 w-full py-12 md:py-16">
             <motion.div
               ref={heroRef}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center"
+              className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center"
               initial={{ opacity: 0, y: 24 }}
               animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="space-y-4">
+              <div className="space-y-6 text-center lg:text-left">
+                <p className="text-sm font-medium text-brand-accent uppercase tracking-widest">
+                  Manual testing, simplified
+                </p>
                 <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-brand-navy tracking-tight leading-[1.15]">
                   {t('landing.heroTitle')}
                   <span className="block mt-2 w-24 h-1 rounded-full bg-brand-accent/80" aria-hidden />
                 </h1>
-                <p className="text-lg sm:text-xl text-brand-navy/70 max-w-lg">
+                <p className="text-lg sm:text-xl text-brand-navy/70 max-w-lg mx-auto lg:mx-0">
                   {t('landing.heroSubtitle')}
                 </p>
-                <div>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                   <Link
                     to="/register"
-                    className="inline-flex px-6 py-3.5 text-base font-medium text-white bg-brand-navy hover:bg-brand-accent rounded-lg transition-colors"
+                    className="inline-flex items-center justify-center px-8 py-4 text-base font-medium text-white bg-brand-navy hover:bg-brand-accent rounded-xl transition-colors shadow-lg"
                   >
                     {t('landing.startFree')}
+                  </Link>
+                  <Link
+                    to="/login"
+                    className="inline-flex items-center justify-center px-8 py-4 text-base font-medium text-brand-navy border-2 border-brand-navy/20 hover:border-brand-navy/40 rounded-xl transition-colors"
+                  >
+                    {t('auth.login')}
                   </Link>
                 </div>
               </div>
               <div className="relative flex justify-center lg:justify-end">
-                <ProductMockup />
+                <div className="w-full max-w-md lg:max-w-lg rounded-2xl overflow-hidden border border-brand-navy/10 bg-white shadow-xl ring-1 ring-black/5">
+                  <img
+                    src="/hero-dashboard.png"
+                    alt=""
+                    className="w-full h-auto object-cover object-top"
+                  />
+                </div>
               </div>
             </motion.div>
           </div>
@@ -103,7 +119,7 @@ const LandingPage = () => {
         <StackedFeaturesSection />
 
         {/* 3) Workflow */}
-        <section className="relative py-10 md:py-12 lg:py-16">
+        <section className="relative py-6 md:py-8 lg:py-12">
           <div className="section-overlay bg-gradient-to-b from-transparent via-[rgba(111,168,220,0.04)] to-transparent" />
           <div ref={workflowRef} className="max-w-6xl mx-auto px-6 md:px-8 relative">
             <motion.p
@@ -131,7 +147,7 @@ const LandingPage = () => {
         </section>
 
         {/* 4) Report Showcase */}
-        <section className="relative py-12 md:py-16 lg:py-24">
+        <section className="relative py-6 md:py-10 lg:py-14">
           <div className="section-overlay bg-gradient-to-b from-transparent via-[rgba(62,86,103,0.03)] to-transparent" />
           <div ref={reportRef} className="max-w-6xl mx-auto px-6 md:px-8">
             <p className={`text-sm font-medium text-brand-accent uppercase tracking-wider mb-3 scroll-animate ${reportInView ? 'in-view' : ''}`}>
@@ -147,7 +163,7 @@ const LandingPage = () => {
         </section>
 
         {/* 5) Trust */}
-        <section className="relative py-12 md:py-16 lg:py-24">
+        <section className="relative py-6 md:py-10 lg:py-14">
           <div className="section-overlay bg-gradient-to-b from-[rgba(111,168,220,0.04)] via-transparent to-transparent" />
           <div ref={trustRef} className="max-w-6xl mx-auto px-6 md:px-8">
             <h2 className={`text-3xl sm:text-4xl font-bold text-brand-navy tracking-tight text-center mb-8 md:mb-10 scroll-animate ${trustInView ? 'in-view' : ''}`}>
@@ -162,7 +178,7 @@ const LandingPage = () => {
         </section>
 
         {/* 6) Final CTA */}
-        <section className="relative py-12 md:py-16 lg:py-24">
+        <section className="relative py-6 md:py-10 lg:py-14">
           <div className="section-overlay bg-gradient-to-b from-transparent via-[rgba(62,86,103,0.05)] to-[rgba(111,168,220,0.06)]" />
           <div ref={ctaRef} className={`max-w-3xl mx-auto px-6 md:px-8 text-center scroll-animate ${ctaInView ? 'in-view' : ''}`}>
             <p className="text-xl sm:text-2xl text-brand-navy/80 font-medium">
@@ -210,25 +226,25 @@ const LandingPage = () => {
 
 function ProductMockup() {
   return (
-    <div className="w-full max-w-md aspect-[4/3] bg-white border border-brand-navy/10 rounded-xl overflow-hidden flex flex-col shadow-sm">
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-brand-navy/10 bg-brand-bg">
-        <div className="w-2 h-2 rounded-full bg-brand-red" />
-        <div className="w-2 h-2 rounded-full bg-brand-accent/60" />
-        <div className="w-2 h-2 rounded-full bg-brand-navy/30" />
+    <div className="w-full aspect-[4/3] bg-white border border-brand-navy/10 rounded-2xl overflow-hidden flex flex-col shadow-xl ring-1 ring-black/5">
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-brand-navy/10 bg-brand-bg/80">
+        <div className="w-2.5 h-2.5 rounded-full bg-brand-red" />
+        <div className="w-2.5 h-2.5 rounded-full bg-brand-accent/60" />
+        <div className="w-2.5 h-2.5 rounded-full bg-brand-navy/30" />
       </div>
-      <div className="flex-1 p-4 flex flex-col gap-3">
-        <div className="h-3 w-3/4 rounded bg-brand-navy/10" />
-        <div className="h-3 w-full rounded bg-brand-navy/5" />
-        <div className="h-3 w-5/6 rounded bg-brand-navy/5" />
+      <div className="flex-1 p-5 flex flex-col gap-3">
+        <div className="h-3 w-3/4 rounded-md bg-brand-navy/10" />
+        <div className="h-3 w-full rounded-md bg-brand-navy/5" />
+        <div className="h-3 w-5/6 rounded-md bg-brand-navy/5" />
         <div className="mt-4 flex gap-2">
-          <div className="h-8 flex-1 rounded bg-brand-accent/20 border border-brand-accent/30" />
-          <div className="h-8 w-16 rounded bg-brand-navy/10" />
+          <div className="h-9 flex-1 rounded-lg bg-brand-accent/20 border border-brand-accent/30" />
+          <div className="h-9 w-20 rounded-lg bg-brand-navy/10" />
         </div>
-        <div className="mt-2 space-y-2">
+        <div className="mt-3 space-y-2">
           {[1, 2, 3].map((i) => (
             <div key={i} className="flex gap-2 items-center">
-              <div className="w-4 h-4 rounded border border-brand-navy/20" />
-              <div className="h-2 flex-1 rounded bg-brand-navy/5" />
+              <div className="w-5 h-5 rounded border border-brand-navy/20" />
+              <div className="h-2.5 flex-1 rounded bg-brand-navy/5" />
             </div>
           ))}
         </div>
