@@ -44,6 +44,63 @@
   background-repeat: no-repeat, no-repeat, repeat;
 }
 
+/* Isolate 改善ポイント section so it always shows its own background */
+.feature-highlight {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.feature-highlight::before,
+.feature-highlight::after {
+  display: none !important;
+}
+
+/* Readability: card contrast — 今まで = subdued, TESTREPORT = main focus */
+/* 今まで card: 引き立て役 — より控えめ */
+.feature-highlight .feature-highlight-card:not(.feature-highlight-card-after) {
+  background: rgba(248, 250, 252, 0.85) !important;
+  border: 1px solid rgba(226, 232, 240, 0.6) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+}
+.feature-highlight .feature-highlight-card:not(.feature-highlight-card-after) li,
+.feature-highlight .feature-highlight-card:not(.feature-highlight-card-after) span:not(.feature-highlight-pill) {
+  color: #94a3b8 !important;
+}
+.feature-highlight .feature-highlight-card:not(.feature-highlight-card-after) .feature-highlight-pill {
+  background: rgba(203, 213, 225, 0.5) !important;
+  color: #64748b !important;
+}
+.feature-highlight .feature-highlight-card:not(.feature-highlight-card-after) li span.flex-shrink-0 {
+  color: #cbd5e1 !important;
+}
+
+/* TESTREPORT card: 主役 — 強いコントラスト・青で目立たせる */
+.feature-highlight .feature-highlight-card-after {
+  background: rgba(239, 246, 255, 0.95) !important;
+  border: 1px solid rgba(96, 165, 250, 0.5) !important;
+  box-shadow: 0 10px 32px rgba(59, 130, 246, 0.12) !important;
+}
+.feature-highlight .feature-highlight-card-after li,
+.feature-highlight .feature-highlight-card-after span:not(.feature-highlight-pill) {
+  color: #0f172a !important;
+}
+.feature-highlight .feature-highlight-card-after .feature-highlight-pill {
+  background: rgba(59, 130, 246, 0.28) !important;
+  color: #1d4ed8 !important;
+}
+.feature-highlight .feature-highlight-card-after li span.flex-shrink-0 {
+  color: var(--brand-accent) !important;
+}
+
+.feature-highlight h2,
+.feature-highlight h3,
+.feature-highlight h4 {
+  color: #1f2a37 !important;
+}
+.feature-highlight p {
+  color: #334155 !important;
+}
+
 /* Full-bleed section overlay (no clipping by max-w); use gradient fades, low opacity */
 .section-overlay {
   position: absolute;

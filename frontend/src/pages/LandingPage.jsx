@@ -27,7 +27,7 @@ function useInView(options = {}) {
 }
 
 const LandingPage = () => {
-  const { t } = useLang();
+  const { lang, changeLang, t } = useLang();
   const [heroRef, heroInView] = useInView();
   const [workflowRef, workflowInView] = useInView();
   const [reportRef, reportInView] = useInView();
@@ -46,7 +46,25 @@ const LandingPage = () => {
               <img src="/logo.png" alt="" className="h-8 w-8 shrink-0 object-contain" aria-hidden />
               <span className="text-lg font-semibold text-brand-navy tracking-tight truncate">Test Report</span>
             </Link>
-            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+            <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+              <div className="flex items-center bg-brand-navy/5 rounded-lg p-0.5" role="group" aria-label={t('landing.langSwitch') || 'Language'}>
+                <button
+                  type="button"
+                  onClick={() => changeLang('en')}
+                  className={`px-2.5 py-1.5 rounded-md text-sm font-medium transition-colors ${lang === 'en' ? 'bg-white text-brand-navy shadow-sm' : 'text-brand-navy/70 hover:text-brand-navy'}`}
+                  aria-pressed={lang === 'en'}
+                >
+                  EN
+                </button>
+                <button
+                  type="button"
+                  onClick={() => changeLang('ja')}
+                  className={`px-2.5 py-1.5 rounded-md text-sm font-medium transition-colors ${lang === 'ja' ? 'bg-white text-brand-navy shadow-sm' : 'text-brand-navy/70 hover:text-brand-navy'}`}
+                  aria-pressed={lang === 'ja'}
+                >
+                  日本語
+                </button>
+              </div>
               <Link
                 to="/login"
                 className="px-4 py-2.5 text-sm font-medium text-brand-navy/70 hover:text-brand-navy rounded-lg hover:bg-brand-navy/5 transition-colors"
@@ -68,15 +86,15 @@ const LandingPage = () => {
         {/* 1) Hero — vertically centered in viewport; overflow-x-clip only here to avoid breaking sticky below */}
         <section className="relative min-h-[calc(100vh-5rem)] flex flex-col justify-center overflow-x-clip">
           <div className="section-overlay bg-gradient-to-b from-[rgba(111,168,220,0.06)] via-transparent to-transparent" />
-          <div className="max-w-6xl mx-auto px-6 md:px-8 w-full py-12 md:py-16">
+          <div className="max-w-7xl mx-auto px-6 md:px-8 lg:px-10 w-full py-12 md:py-16">
             <motion.div
               ref={heroRef}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center"
+              className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 xl:gap-16 items-center"
               initial={{ opacity: 0, y: 24 }}
               animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             >
-              <div className="space-y-6 text-center lg:text-left">
+              <div className="space-y-6 text-center lg:text-left min-w-0">
                 <p className="text-sm font-medium text-brand-accent uppercase tracking-widest">
                   Manual testing, simplified
                 </p>
@@ -102,8 +120,8 @@ const LandingPage = () => {
                   </Link>
                 </div>
               </div>
-              <div className="relative flex justify-center lg:justify-end">
-                <div className="w-full max-w-md lg:max-w-lg rounded-2xl overflow-hidden border border-brand-navy/10 bg-white shadow-xl ring-1 ring-black/5">
+              <div className="relative flex justify-center lg:justify-end min-w-0 overflow-visible">
+                <div className="w-full max-w-xl lg:max-w-2xl rounded-2xl overflow-hidden border border-brand-navy/10 bg-white shadow-xl ring-1 ring-black/5">
                   <img
                     src="/hero-dashboard.png"
                     alt=""
@@ -139,40 +157,78 @@ const LandingPage = () => {
               {t('landing.workflowTitle')}
             </motion.h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-              <WorkflowStep number={1} title={t('landing.workflowStep1')} description={t('landing.workflowStep1Desc')} variant="navy" inView={workflowInView} delay={0} />
-              <WorkflowStep number={2} title={t('landing.workflowStep2')} description={t('landing.workflowStep2Desc')} variant="accent" inView={workflowInView} delay={0.12} />
+              <WorkflowStep number={1} title={t('landing.workflowStep1')} description={t('landing.workflowStep1Desc')} variant="navy" inView={workflowInView} delay={0} hasArrow />
+              <WorkflowStep number={2} title={t('landing.workflowStep2')} description={t('landing.workflowStep2Desc')} variant="accent" inView={workflowInView} delay={0.12} hasArrow />
               <WorkflowStep number={3} title={t('landing.workflowStep3')} description={t('landing.workflowStep3Desc')} variant="red" inView={workflowInView} delay={0.24} />
             </div>
           </div>
         </section>
 
         {/* 4) Report Showcase */}
-        <section className="relative py-6 md:py-10 lg:py-14">
-          <div className="section-overlay bg-gradient-to-b from-transparent via-[rgba(62,86,103,0.03)] to-transparent" />
-          <div ref={reportRef} className="max-w-6xl mx-auto px-6 md:px-8">
-            <p className={`text-sm font-medium text-brand-accent uppercase tracking-wider mb-3 scroll-animate ${reportInView ? 'in-view' : ''}`}>
-              {t('landing.reportLabel')}
-            </p>
-            <h2 className={`text-3xl sm:text-4xl font-bold text-brand-navy tracking-tight mb-8 md:mb-10 scroll-animate scroll-stagger-1 ${reportInView ? 'in-view' : ''}`}>
-              {t('landing.reportTitle')}
-            </h2>
-            <div className={`scroll-animate-scale ${reportInView ? 'in-view' : ''}`}>
-              <ReportPreview />
+        <section className="relative py-6 md:py-10 lg:py-14 bg-gradient-to-b from-[#6FA8DC]/18 via-[#6FA8DC]/10 to-transparent">
+          <div className="absolute inset-0 pointer-events-none z-0" aria-hidden>
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-[#6FA8DC]/20 blur-3xl rounded-full" />
+          </div>
+          <div ref={reportRef} className="relative z-10 max-w-6xl mx-auto px-6 md:px-8">
+            <div className="relative rounded-[32px] bg-white/45 backdrop-blur-lg border border-[#6FA8DC]/18 shadow-[0_18px_60px_rgba(62,86,103,0.14)] p-8 md:p-10 lg:p-12">
+              <div className="pointer-events-none absolute inset-0 rounded-[32px] bg-gradient-to-br from-white/60 via-white/10 to-transparent overflow-hidden" aria-hidden />
+              <p className={`relative text-sm font-medium text-brand-accent uppercase tracking-wider mb-3 scroll-animate ${reportInView ? 'in-view' : ''}`}>
+                {t('landing.reportLabel')}
+              </p>
+              <h2 className={`relative text-3xl sm:text-4xl font-bold text-brand-navy tracking-tight mb-8 md:mb-10 scroll-animate scroll-stagger-1 ${reportInView ? 'in-view' : ''}`}>
+                {t('landing.reportTitle')}
+              </h2>
+              <div className={`relative scroll-animate-scale ${reportInView ? 'in-view' : ''}`}>
+                <ReportPreview />
+              </div>
             </div>
           </div>
         </section>
 
-        {/* 5) Trust */}
-        <section className="relative py-6 md:py-10 lg:py-14">
-          <div className="section-overlay bg-gradient-to-b from-[rgba(111,168,220,0.04)] via-transparent to-transparent" />
-          <div ref={trustRef} className="max-w-6xl mx-auto px-6 md:px-8">
-            <h2 className={`text-3xl sm:text-4xl font-bold text-brand-navy tracking-tight text-center mb-8 md:mb-10 scroll-animate ${trustInView ? 'in-view' : ''}`}>
-              {t('landing.trustTitle')}
+        {/* 5) Before / After */}
+        <section className="feature-highlight relative isolate py-6 md:py-10 lg:py-14 overflow-hidden">
+          <div className="absolute inset-0 -z-10 bg-[#D4E6F7]" aria-hidden />
+          <div ref={trustRef} className="relative z-10 max-w-6xl mx-auto px-6 md:px-8">
+            <p className={`text-sm font-medium text-brand-accent uppercase tracking-wider mb-3 text-center scroll-animate ${trustInView ? 'in-view' : ''}`}>
+              {t('landing.beforeAfterLabel')}
+            </p>
+            <h2 className={`text-3xl sm:text-4xl font-bold text-slate-800 tracking-tight text-center mb-4 scroll-animate scroll-stagger-1 ${trustInView ? 'in-view' : ''}`}>
+              {t('landing.beforeAfterTitle')}
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-10">
-              <TrustItem title={t('landing.trust1')} color="navy" inView={trustInView} delay={1} />
-              <TrustItem title={t('landing.trust2')} color="accent" inView={trustInView} delay={2} />
-              <TrustItem title={t('landing.trust3')} color="red" inView={trustInView} delay={3} />
+            <p className={`text-center text-brand-navy/85 max-w-xl mx-auto mb-8 md:mb-10 scroll-animate scroll-stagger-2 ${trustInView ? 'in-view' : ''}`}>
+              {t('landing.beforeAfterSubtext')}
+            </p>
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 scroll-animate scroll-stagger-3 ${trustInView ? 'in-view' : ''}`}>
+              <div className="feature-highlight-card rounded-xl border border-brand-navy/10 bg-brand-navy/5 p-6 md:p-7">
+                <span className="feature-highlight-pill inline-block text-xs font-medium text-brand-navy/70 uppercase tracking-wider mb-5 px-3 py-1.5 rounded-full bg-brand-navy/10">
+                  {t('landing.beforeAfterBeforeTitle')}
+                </span>
+                <ul className="space-y-4">
+                  {[t('landing.beforeAfterBefore1'), t('landing.beforeAfterBefore2'), t('landing.beforeAfterBefore3')].map((line, i) => (
+                    <li key={i} className="flex items-start gap-3 text-slate-600">
+                      <span className="flex-shrink-0 mt-0.5 w-5 h-5 rounded-full flex items-center justify-center bg-brand-navy/10 text-brand-navy/50" aria-hidden>
+                        <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                      </span>
+                      <span>{line}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="feature-highlight-card feature-highlight-card-after rounded-xl border border-brand-accent/20 bg-brand-accent/5 p-6 md:p-7">
+                <span className="feature-highlight-pill inline-block text-xs font-medium text-brand-accent uppercase tracking-wider mb-5 px-3 py-1.5 rounded-full bg-brand-accent/15">
+                  {t('landing.beforeAfterAfterTitle')}
+                </span>
+                <ul className="space-y-4">
+                  {[t('landing.beforeAfterAfter1'), t('landing.beforeAfterAfter2'), t('landing.beforeAfterAfter3')].map((line, i) => (
+                    <li key={i} className="flex items-start gap-3 text-slate-600">
+                      <span className="flex-shrink-0 mt-0.5 w-5 h-5 rounded-full flex items-center justify-center bg-brand-accent/20 text-brand-accent" aria-hidden>
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                      </span>
+                      <span>{line}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </section>
@@ -253,85 +309,134 @@ function ProductMockup() {
   );
 }
 
-function WorkflowStep({ number, title, description, variant = 'navy', inView, delay = 0 }) {
-  const circleClass = {
-    navy: 'bg-brand-navy text-white',
-    accent: 'bg-brand-accent text-white',
-    red: 'bg-brand-red text-white',
+const ARROW_FILL = { navy: 'rgba(62,86,103,0.05)', accent: 'rgba(111,168,220,0.1)', red: 'rgba(229,115,115,0.1)' };
+const ARROW_STROKE = { navy: 'rgba(62,86,103,0.15)', accent: 'rgba(111,168,220,0.2)', red: 'rgba(229,115,115,0.2)' };
+const ARROW_PATH = 'M 12,0 L 100,0 L 124,50 L 100,100 L 12,100 Q 0,100 0,88 L 0,12 Q 0,0 12,0 Z';
+
+function WorkflowStep({ number, title, description, variant = 'navy', inView, delay = 0, hasArrow = false }) {
+  const panelBgClass = {
+    navy: 'bg-brand-navy/5',
+    accent: 'bg-brand-accent/10',
+    red: 'bg-brand-red/10',
   }[variant];
-  const borderClass = {
-    navy: 'border-brand-navy/10',
+  const panelBorderClass = {
+    navy: 'border-brand-navy/15',
     accent: 'border-brand-accent/20',
     red: 'border-brand-red/20',
   }[variant];
+  const panelShapeClass = 'rounded-xl';
   return (
     <motion.article
-      className={`relative flex flex-col p-6 md:p-7 rounded-xl border ${borderClass} bg-white/60 backdrop-blur-sm transition-shadow duration-300 hover:shadow-md hover:-translate-y-1`}
+      className="relative flex flex-col w-full"
       initial={{ opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
       transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
     >
-      <motion.div
-        className={`flex items-center justify-center w-11 h-11 rounded-full font-semibold text-sm shrink-0 mb-4 ${circleClass}`}
-        initial={{ opacity: 0, scale: 0.5 }}
-        animate={inView ? { opacity: 1, scale: 1 } : {}}
-        transition={{ duration: 0.4, delay: delay + 0.08, ease: [0.22, 1, 0.36, 1] }}
-      >
-        {number}
-      </motion.div>
-      <motion.h3
-        className="text-lg font-semibold text-brand-navy mb-2"
-        initial={{ opacity: 0, x: -6 }}
-        animate={inView ? { opacity: 1, x: 0 } : {}}
-        transition={{ duration: 0.4, delay: delay + 0.14 }}
-      >
-        {title}
-      </motion.h3>
       <motion.p
-        className="text-sm text-brand-navy/70 leading-relaxed"
-        initial={{ opacity: 0, y: 6 }}
+        className="text-4xl md:text-5xl font-bold text-brand-navy/25 tracking-tight mb-4"
+        initial={{ opacity: 0, y: 8 }}
         animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.4, delay: delay + 0.2 }}
+        transition={{ duration: 0.4, delay: delay + 0.08 }}
       >
-        {description}
+        STEP {String(number).padStart(2, '0')}
       </motion.p>
+      <div className="relative flex-1 min-h-0">
+        <motion.div
+          className={`relative backdrop-blur-sm transition-shadow duration-300 hover:shadow-sm overflow-visible ${hasArrow ? '' : `${panelBgClass} border ${panelBorderClass} ${panelShapeClass} p-5 md:p-6`}`}
+          initial={{ opacity: 0, y: 12 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.4, delay: delay + 0.16 }}
+        >
+          {hasArrow && (
+            <div className="absolute inset-0 hidden md:block w-[calc(100%+1.5rem)] h-full pointer-events-none" aria-hidden>
+              <svg className="absolute inset-0 w-full h-full" viewBox="0 0 124 100" preserveAspectRatio="none" aria-hidden>
+                <path
+                  d={ARROW_PATH}
+                  fill={ARROW_FILL[variant]}
+                  stroke={ARROW_STROKE[variant]}
+                  strokeWidth="1.25"
+                  vectorEffect="non-scaling-stroke"
+                />
+              </svg>
+            </div>
+          )}
+          <div className={`relative ${hasArrow ? 'p-5 md:p-6 pr-6 md:pr-8' : ''}`}>
+            <motion.h3
+              className="text-lg font-semibold text-brand-navy mb-2"
+              initial={{ opacity: 0, x: -6 }}
+              animate={inView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.4, delay: delay + 0.22 }}
+            >
+              {title}
+            </motion.h3>
+            <motion.p
+              className="text-sm text-brand-navy/70 leading-relaxed"
+              initial={{ opacity: 0, y: 6 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.4, delay: delay + 0.26 }}
+            >
+              {description}
+            </motion.p>
+          </div>
+        </motion.div>
+      </div>
     </motion.article>
   );
 }
 
 function ReportPreview() {
   const { t } = useLang();
+  const executedAt = new Date();
+  executedAt.setDate(executedAt.getDate() - 2);
   return (
     <div className="bg-white border border-brand-navy/12 rounded-lg overflow-hidden max-w-2xl mx-auto">
       <div className="px-6 py-4 border-b border-brand-navy/10 bg-brand-bg/80 flex items-center gap-3">
         <div className="w-1 h-8 rounded-full bg-brand-accent/70" aria-hidden />
-        <div className="flex items-center justify-between flex-1">
-          <span className="text-sm font-medium text-brand-navy">Test Run Report</span>
-          <span className="text-xs text-brand-navy/60">v1.2 · {new Date().toLocaleDateString()}</span>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <span className="text-sm font-medium text-brand-navy">{t('landing.reportPreviewTitle')}</span>
+            <span className="text-xs text-brand-navy/60">{t('landing.reportPreviewVersion')} 1.2</span>
+          </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-0.5 mt-1 text-xs text-brand-navy/60">
+            <span>{t('landing.reportPreviewEnv')}: Staging</span>
+            <span>{t('landing.reportPreviewExecutedAt')}: {executedAt.toLocaleString(undefined, { dateStyle: 'short', timeStyle: 'short' })}</span>
+            <span>{t('landing.reportPreviewExecutedBy')}: M. Sato</span>
+          </div>
         </div>
+      </div>
+      <div className="px-6 py-3 border-b border-brand-navy/10 bg-brand-bg/50 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+        <span className="text-brand-navy font-medium">{t('landing.reportPreviewSuccessRate')}: 83%</span>
+        <span className="text-brand-navy/70">12 {t('dashboard.total')} · 8 {t('status.pass')} · 2 {t('status.fail')} · 2 {t('status.skipped')}</span>
       </div>
       <div className="p-6 space-y-4">
-        <div className="flex items-center gap-3">
-          <span className="px-2.5 py-1 text-xs font-medium rounded bg-brand-accent/15 text-brand-navy">
-            {t('status.pass')}
-          </span>
-          <span className="text-brand-navy font-medium">Login flow — desktop</span>
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-3">
+            <span className="px-2.5 py-1 text-xs font-medium rounded bg-brand-accent/15 text-brand-navy shrink-0">{t('status.pass')}</span>
+            <span className="text-brand-navy font-medium">Login flow — desktop</span>
+          </div>
+          <p className="text-xs text-brand-navy/60 pl-14">Chrome 120 · 2.3s</p>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="px-2.5 py-1 text-xs font-medium rounded bg-brand-red/15 text-brand-navy">
-            {t('status.fail')}
-          </span>
-          <span className="text-brand-navy font-medium">Checkout — mobile</span>
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-3">
+            <span className="px-2.5 py-1 text-xs font-medium rounded bg-brand-red/15 text-brand-navy shrink-0">{t('status.fail')}</span>
+            <span className="text-brand-navy font-medium">Checkout — mobile</span>
+          </div>
+          <p className="text-xs text-brand-navy/60 pl-14">iOS Safari · 1.1s · Payment timeout · High impact</p>
         </div>
-        <div className="flex items-center gap-3">
-          <span className="px-2.5 py-1 text-xs font-medium rounded bg-brand-navy/10 text-brand-navy">
-            {t('status.skipped')}
-          </span>
-          <span className="text-brand-navy font-medium">Export CSV</span>
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-3">
+            <span className="px-2.5 py-1 text-xs font-medium rounded bg-brand-navy/10 text-brand-navy shrink-0">{t('status.skipped')}</span>
+            <span className="text-brand-navy font-medium">Export CSV</span>
+          </div>
+          <p className="text-xs text-brand-navy/60 pl-14">Env not configured</p>
         </div>
       </div>
-      <div className="px-6 py-3 border-t border-brand-navy/10 bg-brand-bg/50 text-sm text-brand-navy/70">
-        12 {t('dashboard.total')} · 8 {t('status.pass')} · 2 {t('status.fail')}
+      <div className="px-6 py-3 border-t border-brand-navy/10 bg-brand-bg/50 flex items-center gap-4 text-sm text-brand-navy/70">
+        <span>{t('landing.reportPreviewShare')}</span>
+        <span>·</span>
+        <span>{t('landing.reportPreviewComments')} (3)</span>
+        <span>·</span>
+        <span>{t('landing.reportPreviewExport')} PDF / Excel</span>
       </div>
     </div>
   );

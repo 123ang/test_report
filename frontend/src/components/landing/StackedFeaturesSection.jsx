@@ -67,8 +67,8 @@ export function StackedFeaturesSection() {
                   <h2 className="text-2xl sm:text-3xl font-bold text-brand-navy tracking-tight">{feature.title}</h2>
                   <p className="mt-4 text-lg text-brand-navy/70 max-w-lg">{feature.description}</p>
                 </div>
-                <div className="rounded-xl overflow-hidden border border-brand-navy/10 bg-white shadow-lg aspect-[4/3] max-w-lg">
-                  <img src={CARD_IMAGES[i]} alt="" className="w-full h-full object-cover object-top" />
+                <div className="rounded-xl overflow-hidden border border-brand-navy/10 bg-white shadow-lg w-full max-w-[60vw]">
+                  <img src={CARD_IMAGES[i]} alt="" className="w-full h-auto block" />
                 </div>
               </motion.div>
             );
@@ -94,10 +94,10 @@ export function StackedFeaturesSection() {
         style={{ height: `calc(100vh + ${SCROLL_DISTANCE_PX}px)` }}
       >
         {/* Pin: sticky stays centered in viewport while user scrolls through the section. top-0 + h-screen + flex center = content centered. */}
-        <div className="sticky top-0 h-screen flex items-center justify-center py-8 md:py-10">
-          <div className="w-full max-w-6xl mx-auto px-6 md:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 items-center">
+        <div className="sticky top-0 h-screen flex items-center justify-center py-8 md:py-10 overflow-visible">
+          <div className="w-full max-w-7xl mx-auto px-6 md:px-8 lg:px-10 grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 items-center">
             {/* Left: copy with stack-up animation (in sync with right card) */}
-            <div className="relative min-h-[140px] lg:min-h-[160px] flex flex-col justify-center">
+            <div className="relative min-h-[140px] lg:min-h-[160px] flex flex-col justify-center min-w-0">
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={activeIndex}
@@ -121,26 +121,26 @@ export function StackedFeaturesSection() {
             </div>
 
             {/* Right: single card per step, same stack-up animation as left */}
-            <div className="relative flex justify-center items-center min-h-[260px] md:min-h-[300px]">
-              <div className="w-full max-w-lg relative mx-auto flex justify-center">
+            <div className="relative flex justify-center items-center min-h-[360px] md:min-h-[440px] min-w-0 overflow-visible">
+              <div className="w-full max-w-[60vw] relative mx-auto flex justify-center">
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
                     key={activeIndex}
-                    className="w-full max-w-lg aspect-[4/3] max-h-[300px] flex justify-center items-center"
+                    className="w-full max-w-[60vw] flex justify-center items-center"
                     initial={stackUpInitial}
                     animate={stackUpAnimate}
                     exit={stackUpExit}
                     transition={STACK_UP_TRANSITION}
                   >
-                    <div className="w-full h-full relative" aria-hidden>
+                    <div className="relative w-full" aria-hidden>
                       {/* Stack effect: soft shadow layers behind the card */}
                       <div className="absolute inset-0 rounded-xl bg-white/60 border border-brand-navy/10 translate-y-2 translate-x-2 scale-[0.98]" style={{ boxShadow: '0 4px 12px rgba(62,86,103,0.08)' }} />
                       <div className="absolute inset-0 rounded-xl bg-white/40 border border-brand-navy/5 translate-y-1 translate-x-1 scale-[0.99]" style={{ boxShadow: '0 2px 8px rgba(62,86,103,0.06)' }} />
-                      <div className="relative w-full h-full rounded-xl overflow-hidden border border-brand-navy/10 bg-white shadow-lg">
+                      <div className="relative w-full rounded-xl overflow-hidden border border-brand-navy/10 bg-white shadow-lg">
                         <img
                           src={CARD_IMAGES[activeIndex]}
                           alt=""
-                          className="w-full h-full object-cover object-top"
+                          className="w-full h-auto block"
                         />
                       </div>
                     </div>
