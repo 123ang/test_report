@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useLang } from '../../context/LangContext';
 
 /**
  * Shared layout for legal pages (Privacy Policy, Terms).
  * Sticky footer: main has flex-1 so footer stays at bottom when content is short.
  */
 export function LegalLayout({ title, lastUpdated, children }) {
+  const { t } = useLang();
   return (
     <div className="min-h-screen flex flex-col bg-atmosphere">
       <header className="sticky top-0 z-20 w-full border-b border-brand-navy/8 bg-brand-bg/95 backdrop-blur-sm shrink-0">
@@ -14,12 +16,12 @@ export function LegalLayout({ title, lastUpdated, children }) {
             <Link
               to="/"
               className="inline-flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-brand-navy/70 hover:text-brand-accent rounded-lg hover:bg-brand-accent/5 transition-colors"
-              aria-label="Back to home"
+              aria-label={t('legal.backToHome')}
             >
               <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              Back to Home
+              {t('legal.backToHome')}
             </Link>
             <Link to="/" className="flex items-center gap-2.5 min-w-0">
               <img src="/logo.png" alt="" className="h-7 w-7 shrink-0 object-contain" aria-hidden />
@@ -34,7 +36,7 @@ export function LegalLayout({ title, lastUpdated, children }) {
           {title}
         </h1>
         <p className="text-brand-navy/50 text-sm mb-10">
-          Last updated: {lastUpdated}
+          {t('legal.lastUpdated')}: {lastUpdated}
         </p>
         {children}
       </main>
@@ -42,7 +44,7 @@ export function LegalLayout({ title, lastUpdated, children }) {
       <footer className="bg-section-depth-clean border-t border-brand-navy/10 shrink-0">
         <div className="max-w-5xl mx-auto px-6 md:px-10 py-7 md:py-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 text-sm text-brand-navy/60">
-            <p>© {new Date().getFullYear()} Sun Tzu Technologies. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Sun Tzu Technologies. {t('landing.allRightsReserved')}</p>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
               <a
                 href="mailto:suntzutechnologies@gmail.com"
@@ -51,10 +53,10 @@ export function LegalLayout({ title, lastUpdated, children }) {
                 suntzutechnologies@gmail.com
               </a>
               <Link to="/privacy-policy" className="hover:text-brand-accent transition-colors">
-                Privacy Policy
+                {t('legal.privacyPolicy')}
               </Link>
               <Link to="/terms" className="hover:text-brand-accent transition-colors">
-                Terms
+                {t('legal.terms')}
               </Link>
             </div>
           </div>

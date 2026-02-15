@@ -8,8 +8,6 @@ import Loading from '../components/Loading';
 import ConfirmDialog from '../components/ConfirmDialog';
 import toast from 'react-hot-toast';
 
-const LANG_LABELS = { en: 'English', ja: '日本語', zh: '中文' };
-
 const ProjectsPage = () => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +15,7 @@ const ProjectsPage = () => {
   const [showForm, setShowForm] = useState(false);
   const [editProject, setEditProject] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
-  const [form, setForm] = useState({ name: '', description: '', language: 'en' });
+  const [form, setForm] = useState({ name: '', description: '' });
   const [memberEmail, setMemberEmail] = useState('');
   const [removeMemberId, setRemoveMemberId] = useState(null);
   const [showFinishedProjects, setShowFinishedProjects] = useState(false);
@@ -31,8 +29,8 @@ const ProjectsPage = () => {
   const finishedProjects = projects.filter(p => p.status === 'finished');
 
   useEffect(() => {
-    setBreadcrumb([{ label: 'Projects', to: null }]);
-  }, [setBreadcrumb]);
+    setBreadcrumb([{ label: t('projects.title'), to: null }]);
+  }, [setBreadcrumb, t]);
 
   useEffect(() => {
     load();
@@ -58,13 +56,13 @@ const ProjectsPage = () => {
 
   const openCreate = () => {
     setEditProject(null);
-    setForm({ name: '', description: '', language: 'en' });
+    setForm({ name: '', description: '' });
     setShowForm(true);
   };
 
   const openEdit = (p) => {
     setEditProject(p);
-    setForm({ name: p.name, description: p.description || '', language: p.language });
+    setForm({ name: p.name, description: p.description || '' });
     setMemberEmail('');
     setShowForm(true);
   };
@@ -158,9 +156,9 @@ const ProjectsPage = () => {
               </svg>
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Projects</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">{t('projects.title')}</h1>
               <p className="text-slate-600 mt-1 max-w-xl">
-                Organize your work by project. Each project can have multiple versions and test cases—easy to track and share with your team.
+                {t('projects.subtitle')}
               </p>
             </div>
           </div>
@@ -170,7 +168,7 @@ const ProjectsPage = () => {
             className="btn btn-primary flex-shrink-0 inline-flex items-center justify-center gap-2 shadow-md shadow-primary-600/25 hover:shadow-lg hover:shadow-primary-600/30 transition-all duration-200 hover:-translate-y-0.5"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-            <span>Create project</span>
+            <span>{t('projects.createProject')}</span>
           </button>
         </div>
       </div>
@@ -179,7 +177,7 @@ const ProjectsPage = () => {
         <div className="space-y-8">
           {/* Active projects – staggered fade-in, hover lift */}
           <section>
-            <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Your projects</h2>
+            <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">{t('projects.yourProjects')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
               {activeProjects.map((p, i) => (
                 <div
@@ -191,15 +189,12 @@ const ProjectsPage = () => {
                     <Link to={`/projects/${p.id}`} className="flex-1 min-w-0 group">
                       <span className="text-lg font-semibold text-slate-900 group-hover:text-primary-600 truncate block transition-colors">{p.name}</span>
                     </Link>
-                    <span className="flex-shrink-0 px-2.5 py-1 text-xs rounded-lg bg-primary-50 text-primary-700 font-medium border border-primary-100">
-                      {LANG_LABELS[p.language] || p.language}
-                    </span>
                   </div>
                   {p.description && <p className="text-sm text-slate-600 mb-4 line-clamp-2">{p.description}</p>}
                   <div className="flex items-center gap-4 text-xs text-slate-500 mb-4">
                     <span className="inline-flex items-center gap-1">
                       <svg className="w-4 h-4 text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                      {p._count?.versions || 0} version{p._count?.versions !== 1 ? 's' : ''}
+                      {p._count?.versions || 0} {(p._count?.versions || 0) === 1 ? t('projects.versionCount') : t('projects.versionCountPlural')}
                     </span>
                     <span>{p.createdBy?.name}</span>
                   </div>
@@ -208,17 +203,17 @@ const ProjectsPage = () => {
                       to={`/projects/${p.id}`}
                       className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-primary-600 bg-primary-50 hover:bg-primary-100 border border-primary-100 transition-colors"
                     >
-                      <span>Open project</span>
+                      <span>{t('projects.openProject')}</span>
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                     </Link>
                     <span className="flex-1 min-w-0" />
-                    <button type="button" onClick={() => openEdit(p)} className="p-2 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors" title="Settings">
+                    <button type="button" onClick={() => openEdit(p)} className="p-2 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors" title={t('projects.settings')}>
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                     </button>
-                    <button type="button" onClick={() => setEndProjectId(p.id)} className="p-2 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors" title="End project">
+                    <button type="button" onClick={() => setEndProjectId(p.id)} className="p-2 rounded-lg text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors" title={t('projects.endProject')}>
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                     </button>
-                    <button type="button" onClick={() => setDeleteId(p.id)} className="p-2 rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors" title="Delete project">
+                    <button type="button" onClick={() => setDeleteId(p.id)} className="p-2 rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors" title={t('projects.deleteProject')}>
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                     </button>
                   </div>
@@ -237,7 +232,7 @@ const ProjectsPage = () => {
               >
                 <span className="flex items-center gap-2 text-sm font-semibold text-slate-600">
                   <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" /></svg>
-                  Finished projects ({finishedProjects.length})
+                  {t('projects.finishedProjects')} ({finishedProjects.length})
                 </span>
                 <span className="flex-shrink-0 ml-2 text-slate-400 transition-transform duration-200" style={{ transform: showFinishedProjects ? 'rotate(180deg)' : 'none' }}>
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -250,7 +245,7 @@ const ProjectsPage = () => {
                       <div key={p.id} className="rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm hover:shadow-md hover:border-slate-300/80 transition-all duration-200">
                         <div className="flex items-start justify-between gap-2 mb-3">
                           <Link to={`/projects/${p.id}`} className="text-base font-semibold text-slate-800 hover:text-primary-600 truncate flex-1">{p.name}</Link>
-                          <span className="flex-shrink-0 px-2 py-0.5 text-xs rounded-lg bg-slate-200 text-slate-600 font-medium">Finished</span>
+                          <span className="flex-shrink-0 px-2 py-0.5 text-xs rounded-lg bg-slate-200 text-slate-600 font-medium">{t('projectDetail.finished')}</span>
                         </div>
                         {p.description && <p className="text-sm text-slate-600 mb-3 line-clamp-2">{p.description}</p>}
                         <div className="flex items-center justify-between text-xs text-slate-500 mb-3">
@@ -260,9 +255,9 @@ const ProjectsPage = () => {
                         <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-100">
                           <Link to={`/projects/${p.id}`} className="text-sm font-medium text-primary-600 hover:text-primary-700">Open</Link>
                           <span className="flex-1" />
-                          <button type="button" onClick={() => setReopenProjectId(p.id)} className="text-sm font-medium text-primary-600 hover:text-primary-700">Reopen</button>
-                          <button type="button" onClick={() => openEdit(p)} className="text-sm text-slate-500 hover:text-slate-700">Settings</button>
-                          <button type="button" onClick={() => setDeleteId(p.id)} className="text-sm text-red-500 hover:text-red-700">Delete</button>
+                          <button type="button" onClick={() => setReopenProjectId(p.id)} className="text-sm font-medium text-primary-600 hover:text-primary-700">{t('projectDetail.reopenProject')}</button>
+                          <button type="button" onClick={() => openEdit(p)} className="text-sm text-slate-500 hover:text-slate-700">{t('projects.settings')}</button>
+                          <button type="button" onClick={() => setDeleteId(p.id)} className="text-sm text-red-500 hover:text-red-700">{t('common.delete')}</button>
                         </div>
                       </div>
                     ))}
@@ -287,7 +282,7 @@ const ProjectsPage = () => {
           <p className="text-slate-600 mb-6 max-w-sm mx-auto">Create your first project to start organizing versions and test cases. One click and you’re ready to go.</p>
           <button type="button" onClick={openCreate} className="btn btn-primary inline-flex items-center gap-2">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-            Create project
+            {t('projects.createProject')}
           </button>
         </div>
       )}
@@ -296,68 +291,58 @@ const ProjectsPage = () => {
       {showForm && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto">
           <div className="animate-modal-in bg-white rounded-2xl shadow-2xl border border-slate-200/80 max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 my-4 sm:my-8" style={{ maxWidth: 'min(28rem, calc(100vw - 1.5rem))' }}>
-            <h2 className="text-xl font-semibold text-slate-900 mb-4">{editProject ? 'Edit project' : 'New project'}</h2>
+            <h2 className="text-xl font-semibold text-slate-900 mb-4">{editProject ? t('projects.editProject') : t('projects.newProject')}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Project Name *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('projects.projectNameLabel')}</label>
                 <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                  className="input w-full" placeholder="e.g. E-commerce Website" />
+                  className="input w-full" placeholder={t('projects.projectNamePlaceholder')} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('projects.descriptionLabel')}</label>
                 <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })}
-                  className="input w-full" rows={3} placeholder="Optional description" />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Language *</label>
-                <select value={form.language} onChange={e => setForm({ ...form, language: e.target.value })} className="input w-full">
-                  <option value="en">English</option>
-                  <option value="ja">日本語 (Japanese)</option>
-                  <option value="zh">中文 (Chinese)</option>
-                </select>
+                  className="input w-full" rows={3} placeholder={t('projects.projectDescriptionPlaceholder')} />
               </div>
               {/* Members section (only show if editing and owner) */}
               {editProject && isOwner(editProject) && (
-                <div className="border-t pt-4 mt-2">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-3">{t('members.title')}</h3>
-                  {/* Add member - use div + button to avoid nested form (invalid HTML) */}
-                  <div className="flex gap-2 mb-3">
+                <div className="border-t border-slate-200 pt-5 mt-4">
+                  <h3 className="text-sm font-semibold text-slate-800 mb-4">{t('members.title')}</h3>
+                  <div className="flex gap-2 mb-4">
                     <input type="email" value={memberEmail} onChange={e => setMemberEmail(e.target.value)}
                       onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddMember(e); } }}
                       className="input flex-1 text-sm" placeholder={t('members.email')} />
-                    <button type="button" onClick={() => handleAddMember({ preventDefault: () => {} })} className="btn bg-indigo-50 text-indigo-600 hover:bg-indigo-100 text-sm px-3">{t('members.addButton')}</button>
+                    <button type="button" onClick={() => handleAddMember({ preventDefault: () => {} })} className="btn bg-primary-50 text-primary-600 hover:bg-primary-100 text-sm px-3 shrink-0">{t('members.addButton')}</button>
                   </div>
-                  {/* Member list */}
                   {editProject.members && editProject.members.length > 0 ? (
                     <div className="space-y-2">
                       {editProject.members.map(m => (
-                        <div key={m.id} className="flex items-center justify-between p-2 bg-gray-50 rounded text-sm">
+                        <div key={m.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100 text-sm">
                           <div className="min-w-0 flex-1">
-                            <p className="font-medium truncate">{m.user.name}</p>
-                            <p className="text-xs text-gray-500 truncate">{m.user.email}</p>
+                            <p className="font-medium text-slate-800 truncate">{m.user.name}</p>
+                            <p className="text-xs text-slate-500 truncate">{m.user.email}</p>
                           </div>
-                          <button type="button" onClick={() => setRemoveMemberId(m.id)} className="text-xs text-red-500 hover:text-red-700 ml-2">Remove</button>
+                          <button type="button" onClick={() => setRemoveMemberId(m.id)} className="text-xs font-medium text-red-500 hover:text-red-700 hover:bg-red-50 py-1.5 px-2 rounded-lg shrink-0">{t('members.removeMember')}</button>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-xs text-gray-500">{t('members.noMembers')}</p>
+                    <p className="text-sm text-slate-500 py-3">{t('members.noMembers')}</p>
                   )}
                 </div>
               )}
               <div className="flex gap-3 pt-2">
-                <button type="submit" className="btn btn-primary flex-1">{editProject ? 'Save' : 'Create'}</button>
-                <button type="button" onClick={() => setShowForm(false)} className="btn bg-gray-100 text-gray-700 hover:bg-gray-200 flex-1">Cancel</button>
+                <button type="submit" className="btn btn-primary flex-1">{editProject ? t('common.save') : t('projects.createButton')}</button>
+                <button type="button" onClick={() => setShowForm(false)} className="btn bg-gray-100 text-gray-700 hover:bg-gray-200 flex-1">{t('common.cancel')}</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-      <ConfirmDialog open={!!deleteId} title="Delete Project" message="This will delete the project and all its versions and test cases. Are you sure?" onConfirm={handleDelete} onCancel={() => setDeleteId(null)} />
-      <ConfirmDialog open={!!removeMemberId} title={t('members.removeMember')} message="Remove this member from the project?" onConfirm={handleRemoveMember} onCancel={() => setRemoveMemberId(null)} />
-      <ConfirmDialog open={!!endProjectId} title="End project" message="Mark this project as finished? You can reopen it later from Finished projects." confirmLabel="End" onConfirm={handleEndProject} onCancel={() => setEndProjectId(null)} />
-      <ConfirmDialog open={!!reopenProjectId} title="Reopen project" message="Move this project back to active projects?" confirmLabel="Reopen" onConfirm={handleReopenProject} onCancel={() => setReopenProjectId(null)} />
+      <ConfirmDialog open={!!deleteId} title={t('projects.deleteProject')} message={t('projects.deleteProjectConfirm')} onConfirm={handleDelete} onCancel={() => setDeleteId(null)} />
+      <ConfirmDialog open={!!removeMemberId} title={t('members.removeMember')} message={t('members.removeMemberConfirm')} onConfirm={handleRemoveMember} onCancel={() => setRemoveMemberId(null)} />
+      <ConfirmDialog open={!!endProjectId} title={t('projects.endProject')} message={t('projects.endProjectConfirm')} confirmLabel={t('projects.endConfirmLabel')} onConfirm={handleEndProject} onCancel={() => setEndProjectId(null)} />
+      <ConfirmDialog open={!!reopenProjectId} title={t('projects.reopenProjectTitle')} message={t('projects.reopenProjectMessage')} confirmLabel={t('projects.reopenConfirmLabel')} onConfirm={handleReopenProject} onCancel={() => setReopenProjectId(null)} />
     </div>
   );
 };

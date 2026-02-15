@@ -45,7 +45,7 @@ export const LangProvider = ({ children }) => {
       value = value?.[k];
     }
     
-    return value || key;
+    return value ?? key;
   };
 
   const value = {

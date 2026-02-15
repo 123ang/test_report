@@ -36,7 +36,15 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <LangProvider>
-          <Toaster position="top-right" />
+          <Toaster
+            position="top-center"
+            containerStyle={{
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+            }}
+          />
           <Routes>
             {/* Public landing page */}
             <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />

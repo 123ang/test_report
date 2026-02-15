@@ -4,6 +4,7 @@ import { versionService } from '../services/versionService';
 import { testCaseService } from '../services/testCaseService';
 import { csvService } from '../services/csvService';
 import { useBreadcrumb } from '../context/BreadcrumbContext';
+import { useLang } from '../context/LangContext';
 import { Badge, Sheet } from '../components/ui';
 import { BUG_TEMPLATES, getBugTemplate } from '../utils/bugTemplates';
 import Loading from '../components/Loading';
@@ -32,16 +33,17 @@ export default function VersionDetailPage() {
   const [togglingId, setTogglingId] = useState(null);
   const fileInputRef = useRef(null);
   const { setItems: setBreadcrumb } = useBreadcrumb();
+  const { t } = useLang();
 
   useEffect(() => {
     if (version?.project) {
       setBreadcrumb([
-        { label: 'Projects', to: '/projects' },
+        { label: t('nav.projects'), to: '/projects' },
         { label: version.project.name, to: `/projects/${projectId}` },
         { label: version.name, to: null },
       ]);
     }
-  }, [version, projectId, setBreadcrumb]);
+  }, [version, projectId, setBreadcrumb, t]);
 
   useEffect(() => {
     load();
@@ -225,7 +227,7 @@ export default function VersionDetailPage() {
       {/* Left: Versions list (desktop only) */}
       <aside className="hidden lg:flex flex-col w-56 flex-shrink-0 border-r border-slate-200/80 bg-white/95 overflow-y-auto">
         <div className="p-3 border-b border-slate-100">
-          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Versions</p>
+          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">{t('versionDetail.versions')}</p>
         </div>
         <nav className="p-2 space-y-0.5">
           {versionsList.map((v) => (
@@ -246,7 +248,7 @@ export default function VersionDetailPage() {
           to={`/projects/${projectId}`}
           className="m-2 mt-auto pt-2 border-t border-slate-100 text-sm text-slate-500 hover:text-primary-600"
         >
-          ← Back to project
+          ← {t('versionDetail.backToProjectBefore')}{version?.project?.name || 'project'}{t('versionDetail.backToProjectAfter')}
         </Link>
       </aside>
 
@@ -261,11 +263,11 @@ export default function VersionDetailPage() {
             <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
-            <span>Back to {version?.project?.name || 'project'}</span>
+            <span>{t('versionDetail.backToProjectBefore')}{version?.project?.name || 'project'}{t('versionDetail.backToProjectAfter')}</span>
           </Link>
           <input
             type="search"
-            placeholder="Search title, test, notes..."
+            placeholder={t('versionDetail.searchPlaceholder')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="input py-2.5 text-sm w-full md:max-w-xs"
@@ -276,31 +278,31 @@ export default function VersionDetailPage() {
               onChange={(e) => setFilterSeverity(e.target.value)}
               className="input py-2 text-sm flex-1 min-w-0 md:flex-none md:w-auto"
             >
-              <option value="">All severities</option>
-              <option value="Critical">Critical</option>
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
+              <option value="">{t('versionDetail.allSeverities')}</option>
+              <option value="Critical">{t('severity.Critical')}</option>
+              <option value="High">{t('severity.High')}</option>
+              <option value="Medium">{t('severity.Medium')}</option>
+              <option value="Low">{t('severity.Low')}</option>
             </select>
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
               className="input py-2 text-sm flex-1 min-w-0 md:flex-none md:w-auto"
             >
-              <option value="">All statuses</option>
-              <option value="Open">Open</option>
-              <option value="Fixed">Fixed</option>
-              <option value="Verified">Verified</option>
+              <option value="">{t('versionDetail.allStatuses')}</option>
+              <option value="Open">{t('status.Open')}</option>
+              <option value="Fixed">{t('status.Fixed')}</option>
+              <option value="Verified">{t('status.Verified')}</option>
             </select>
             <div className="hidden md:block flex-1" />
             <button type="button" onClick={openCreate} className="btn btn-primary text-sm w-full md:w-auto order-first md:order-none">
-              + Add bug
+              + {t('versionDetail.addBug')}
             </button>
             <button type="button" onClick={handleExport} className="btn bg-slate-100 text-slate-700 hover:bg-slate-200 text-sm flex-1 md:flex-none">
-              Export CSV
+              {t('csv.export')}
             </button>
             <label className="btn bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer text-sm flex-1 md:flex-none">
-              Import CSV
+              {t('csv.import')}
               <input type="file" accept=".csv" onChange={handleImport} className="hidden" />
             </label>
           </div>
@@ -314,27 +316,32 @@ export default function VersionDetailPage() {
                 {filteredTcs.map((tc) => (
                   <div
                     key={tc.id}
-                    onClick={() => setDetailTc(tc)}
-                    className={`rounded-2xl border bg-white p-4 shadow-sm active:scale-[0.99] transition-transform cursor-pointer touch-manipulation ${
+                    className={`rounded-2xl border bg-white p-4 shadow-sm transition-colors ${
                       detailTc?.id === tc.id ? 'border-primary-300 ring-2 ring-primary-500/20' : 'border-slate-200/80'
                     }`}
                   >
-                    <div className="flex items-start justify-between gap-3 mb-2">
-                      <h3 className="font-semibold text-slate-800 text-base leading-snug flex-1 min-w-0">
-                        {tc.bug}
-                      </h3>
-                      <span className="text-xs text-slate-500 flex-shrink-0">
-                        {new Date(tc.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                    {tc.test && (
-                      <p className="text-sm text-slate-600 line-clamp-2 mb-3" title={tc.test}>
-                        {tc.test}
-                      </p>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => setDetailTc(tc)}
+                      className="w-full text-left rounded-lg -m-1 p-1 hover:bg-slate-50/80 active:scale-[0.99] transition-all cursor-pointer touch-manipulation focus:outline-none focus:ring-2 focus:ring-primary-500/30"
+                    >
+                      <div className="flex items-start justify-between gap-3 mb-2">
+                        <h3 className="font-semibold text-slate-800 text-base leading-snug flex-1 min-w-0">
+                          {tc.bug}
+                        </h3>
+                        <span className="text-xs text-slate-500 flex-shrink-0">
+                          {new Date(tc.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                      {tc.test && (
+                        <p className="text-sm text-slate-600 line-clamp-2 mb-3" title={tc.test}>
+                          {tc.test}
+                        </p>
+                      )}
+                    </button>
                     <div className="flex flex-wrap items-center gap-2 mb-3">
-                      <Badge variant={tc.severity?.toLowerCase()}>{tc.severity}</Badge>
-                      <Badge variant={tc.status?.toLowerCase()}>{tc.status}</Badge>
+                      <Badge variant={tc.severity?.toLowerCase()}>{t('severity.' + tc.severity) ?? tc.severity}</Badge>
+                      <Badge variant={tc.status?.toLowerCase()}>{t('status.' + tc.status) ?? tc.status}</Badge>
                     </div>
                     <div className="flex items-center justify-between pt-3 border-t border-slate-100" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center gap-4">
@@ -346,7 +353,7 @@ export default function VersionDetailPage() {
                             disabled={togglingId === tc.id}
                             className="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500"
                           />
-                          Fixed
+                          {t('status.Fixed')}
                         </label>
                         <label className="flex items-center gap-1.5 text-sm text-slate-600">
                           <input
@@ -356,7 +363,7 @@ export default function VersionDetailPage() {
                             onChange={() => handleToggle(tc.id, 'isVerified')}
                             className="w-4 h-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500"
                           />
-                          Verified
+                          {t('status.Verified')}
                         </label>
                       </div>
                       <div className="flex items-center gap-1">
@@ -374,10 +381,10 @@ export default function VersionDetailPage() {
                             + 📷
                           </label>
                         )}
-                        <button type="button" onClick={() => openEdit(tc)} className="p-2 rounded-lg text-slate-500 hover:bg-slate-100" aria-label="Edit">
+                        <button type="button" onClick={() => openEdit(tc)} className="p-2 rounded-lg text-slate-500 hover:bg-slate-100" aria-label={t('versionDetail.edit')}>
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                         </button>
-                        <button type="button" onClick={() => setDeleteId(tc.id)} className="p-2 rounded-lg text-slate-500 hover:bg-red-50 hover:text-red-600" aria-label="Delete">
+                        <button type="button" onClick={() => setDeleteId(tc.id)} className="p-2 rounded-lg text-slate-500 hover:bg-red-50 hover:text-red-600" aria-label={t('versionDetail.delete')}>
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                         </button>
                       </div>
@@ -391,12 +398,12 @@ export default function VersionDetailPage() {
                 <table className="w-full text-sm border-collapse">
                   <thead className="bg-slate-50 sticky top-0 z-10">
                     <tr>
-                      <th className="text-left py-2.5 px-3 font-medium text-slate-500 w-20">Date</th>
-                      <th className="text-left py-2.5 px-3 font-medium text-slate-500">Title</th>
-                      <th className="text-left py-2.5 px-3 font-medium text-slate-500 w-24">Severity</th>
-                      <th className="text-left py-2.5 px-3 font-medium text-slate-500 w-24">Status</th>
-                      <th className="text-center py-2.5 px-3 font-medium text-slate-500 w-16">Fixed</th>
-                      <th className="text-center py-2.5 px-3 font-medium text-slate-500 w-20">Verified</th>
+                      <th className="text-left py-2.5 px-3 font-medium text-slate-500 w-20">{t('versionDetail.date')}</th>
+                      <th className="text-left py-2.5 px-3 font-medium text-slate-500">{t('testCase.title')}</th>
+                      <th className="text-left py-2.5 px-3 font-medium text-slate-500 w-24">{t('testRun.severity')}</th>
+                      <th className="text-left py-2.5 px-3 font-medium text-slate-500 w-24">{t('testRun.status')}</th>
+                      <th className="text-center py-2.5 px-3 font-medium text-slate-500 whitespace-nowrap min-w-[5rem]">{t('status.Fixed')}</th>
+                      <th className="text-center py-2.5 px-3 font-medium text-slate-500 whitespace-nowrap min-w-[5rem]">{t('status.Verified')}</th>
                       <th className="text-center py-2.5 px-3 font-medium text-slate-500 w-14">📷</th>
                       <th className="w-20" />
                     </tr>
@@ -405,13 +412,18 @@ export default function VersionDetailPage() {
                     {filteredTcs.map((tc) => (
                       <tr
                         key={tc.id}
-                        onClick={() => setDetailTc(tc)}
-                        className={`cursor-pointer hover:bg-slate-50 ${detailTc?.id === tc.id ? 'bg-primary-50/50' : ''}`}
+                        className={detailTc?.id === tc.id ? 'bg-primary-50/50' : ''}
                       >
                         <td className="py-2.5 px-3 text-slate-500 whitespace-nowrap">
                           {new Date(tc.createdAt).toLocaleDateString()}
                         </td>
-                        <td className="py-2.5 px-3">
+                        <td
+                          className="py-2.5 px-3 cursor-pointer hover:bg-slate-50/80 rounded"
+                          onClick={() => setDetailTc(tc)}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setDetailTc(tc); } }}
+                        >
                           <span className="font-medium text-slate-900 truncate block max-w-[200px]" title={tc.bug}>
                             {tc.bug}
                           </span>
@@ -422,10 +434,10 @@ export default function VersionDetailPage() {
                           )}
                         </td>
                         <td className="py-2.5 px-3">
-                          <Badge variant={tc.severity?.toLowerCase()}>{tc.severity}</Badge>
+                          <Badge variant={tc.severity?.toLowerCase()}>{t('severity.' + tc.severity) ?? tc.severity}</Badge>
                         </td>
                         <td className="py-2.5 px-3">
-                          <Badge variant={tc.status?.toLowerCase()}>{tc.status}</Badge>
+                          <Badge variant={tc.status?.toLowerCase()}>{t('status.' + tc.status) ?? tc.status}</Badge>
                         </td>
                         <td className="py-2.5 px-3 text-center">
                           <input
@@ -463,10 +475,10 @@ export default function VersionDetailPage() {
                         </td>
                         <td className="py-2.5 px-3" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center gap-1">
-                            <button type="button" onClick={() => openEdit(tc)} className="p-1.5 text-slate-400 hover:text-primary-600 rounded" title="Edit">
+                            <button type="button" onClick={() => openEdit(tc)} className="p-1.5 text-slate-400 hover:text-primary-600 rounded" title={t('versionDetail.edit')}>
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                             </button>
-                            <button type="button" onClick={() => setDeleteId(tc.id)} className="p-1.5 text-slate-400 hover:text-red-600 rounded" title="Delete">
+                            <button type="button" onClick={() => setDeleteId(tc.id)} className="p-1.5 text-slate-400 hover:text-red-600 rounded" title={t('versionDetail.delete')}>
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                             </button>
                           </div>
@@ -479,8 +491,8 @@ export default function VersionDetailPage() {
             </>
           ) : (
             <div className="flex flex-col items-center justify-center py-16 text-slate-500 px-4">
-              <p className="mb-4 text-sm">No test cases yet.</p>
-              <button type="button" onClick={openCreate} className="btn btn-primary">+ Add bug</button>
+              <p className="mb-4 text-sm">{t('versionDetail.noTestCasesYet')}</p>
+              <button type="button" onClick={openCreate} className="btn btn-primary">+ {t('versionDetail.addBug')}</button>
             </div>
           )}
         </div>
@@ -495,19 +507,19 @@ export default function VersionDetailPage() {
               <p className="text-sm text-slate-900 whitespace-pre-wrap">{detailTc.test || '—'}</p>
             </div>
             <div>
-              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Result</p>
+              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">{t('versionDetail.result')}</p>
               <p className="text-sm text-slate-700 whitespace-pre-wrap">{detailTc.result || '—'}</p>
             </div>
             {detailTc.notes && (
               <div>
-                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">Notes</p>
+                <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">{t('versionDetail.notes')}</p>
                 <p className="text-sm text-slate-600 whitespace-pre-wrap">{detailTc.notes}</p>
               </div>
             )}
             <div className="flex flex-wrap gap-2">
-              <Badge variant={detailTc.severity?.toLowerCase()}>{detailTc.severity}</Badge>
-              <Badge variant={detailTc.status?.toLowerCase()}>{detailTc.status}</Badge>
-              <span className="text-xs text-slate-500">Priority: {detailTc.priority}</span>
+              <Badge variant={detailTc.severity?.toLowerCase()}>{t('severity.' + detailTc.severity) || detailTc.severity}</Badge>
+              <Badge variant={detailTc.status?.toLowerCase()}>{t('status.' + detailTc.status) || detailTc.status}</Badge>
+              <span className="text-xs text-slate-500">{t('versionDetail.priority')}: {t('priority.' + detailTc.priority) || detailTc.priority}</span>
             </div>
             <div className="flex items-center gap-4 pt-2 border-t border-slate-100">
               <label className="flex items-center gap-2 text-sm">
@@ -518,7 +530,7 @@ export default function VersionDetailPage() {
                   disabled={togglingId === detailTc.id}
                   className="w-4 h-4 rounded border-slate-300 text-blue-600"
                 />
-                Fixed
+                {t('status.Fixed')}
               </label>
               <label className="flex items-center gap-2 text-sm">
                 <input
@@ -528,13 +540,13 @@ export default function VersionDetailPage() {
                   onChange={() => handleToggle(detailTc.id, 'isVerified')}
                   className="w-4 h-4 rounded border-slate-300 text-green-600"
                 />
-                Verified
+                {t('status.Verified')}
               </label>
             </div>
-            <p className="text-xs text-slate-400">Created {new Date(detailTc.createdAt).toLocaleString()}</p>
+            <p className="text-xs text-slate-400">{t('versionDetail.created')} {new Date(detailTc.createdAt).toLocaleString()}</p>
             {detailTc.images?.length > 0 && (
               <div>
-                <p className="text-xs font-medium text-slate-500 mb-2">Screenshots</p>
+                <p className="text-xs font-medium text-slate-500 mb-2">{t('versionDetail.screenshots')}</p>
                 <div className="flex flex-wrap gap-2">
                   {detailTc.images.map((img) => (
                     <a
@@ -551,7 +563,7 @@ export default function VersionDetailPage() {
               </div>
             )}
             <button type="button" onClick={() => openEdit(detailTc)} className="btn bg-slate-100 text-slate-700 hover:bg-slate-200 w-full">
-              Edit
+              {t('versionDetail.edit')}
             </button>
           </div>
         )}
@@ -561,96 +573,96 @@ export default function VersionDetailPage() {
       <Sheet
         open={showCreateSheet}
         onClose={() => { setShowCreateSheet(false); setPendingFiles([]); }}
-        title={editTc ? 'Edit test case' : 'New test case'}
+        title={editTc ? t('versionDetail.editTestCase') : t('versionDetail.newTestCase')}
         width="max-w-lg"
       >
         <form onSubmit={handleSubmitBug} className="flex flex-col h-full">
           <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
             <div>
-              <label className="label">Template</label>
+              <label className="label">{t('versionDetail.template')}</label>
               <select
                 className="select text-sm"
                 onChange={(e) => applyTemplate(e.target.value)}
               >
-                {BUG_TEMPLATES.map((t) => (
-                  <option key={t.key} value={t.key}>{t.label}</option>
+                {BUG_TEMPLATES.map((tmpl) => (
+                  <option key={tmpl.key} value={tmpl.key}>{t('templates.' + tmpl.key)}</option>
                 ))}
               </select>
             </div>
 
             <section>
-              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Basic</h3>
+              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">{t('versionDetail.basic')}</h3>
               <div className="space-y-3">
                 <div>
-                  <label className="label">Bug / Category *</label>
+                  <label className="label">{t('versionDetail.bugCategory')}</label>
                   <input
                     type="text"
                     required
                     value={form.bug}
                     onChange={(e) => setForm((f) => ({ ...f, bug: e.target.value }))}
                     className="input"
-                    placeholder="e.g. Login, Cart"
+                    placeholder={t('versionDetail.bugCategoryPlaceholder')}
                   />
                 </div>
                 <div>
-                  <label className="label">Test description *</label>
+                  <label className="label">{t('versionDetail.testDescription')}</label>
                   <textarea
                     required
                     value={form.test}
                     onChange={(e) => setForm((f) => ({ ...f, test: e.target.value }))}
                     className="input"
                     rows={3}
-                    placeholder="What do you test?"
+                    placeholder={t('versionDetail.testDescriptionPlaceholder')}
                   />
                 </div>
                 <div>
-                  <label className="label">Result</label>
+                  <label className="label">{t('versionDetail.result')}</label>
                   <textarea
                     value={form.result}
                     onChange={(e) => setForm((f) => ({ ...f, result: e.target.value }))}
                     className="input"
                     rows={2}
-                    placeholder="Actual result (after testing)"
+                    placeholder={t('versionDetail.resultPlaceholder')}
                   />
                 </div>
               </div>
             </section>
 
             <section>
-              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">Environment</h3>
+              <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-3">{t('versionDetail.environment')}</h3>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="label">Severity</label>
+                  <label className="label">{t('testRun.severity')}</label>
                   <select value={form.severity} onChange={(e) => setForm((f) => ({ ...f, severity: e.target.value }))} className="select">
-                    <option value="Critical">Critical</option>
-                    <option value="High">High</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Low">Low</option>
+                    <option value="Critical">{t('severity.Critical')}</option>
+                    <option value="High">{t('severity.High')}</option>
+                    <option value="Medium">{t('severity.Medium')}</option>
+                    <option value="Low">{t('severity.Low')}</option>
                   </select>
                 </div>
                 <div>
-                  <label className="label">Priority</label>
+                  <label className="label">{t('versionDetail.priority')}</label>
                   <select value={form.priority} onChange={(e) => setForm((f) => ({ ...f, priority: e.target.value }))} className="select">
-                    <option value="High">High</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Low">Low</option>
+                    <option value="High">{t('priority.High')}</option>
+                    <option value="Medium">{t('priority.Medium')}</option>
+                    <option value="Low">{t('priority.Low')}</option>
                   </select>
                 </div>
               </div>
               <div className="mt-3">
-                <label className="label">Notes</label>
+                <label className="label">{t('versionDetail.notes')}</label>
                 <textarea
                   value={form.notes}
                   onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
                   className="input"
                   rows={2}
-                  placeholder="Extra notes"
+                  placeholder={t('versionDetail.notesPlaceholder')}
                 />
               </div>
             </section>
 
             <section>
-              <label className="label">Photos / Screenshots</label>
+              <label className="label">{t('versionDetail.photosScreenshots')}</label>
               {editTc?.images?.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-2">
                   {editTc.images.map((img) => (
@@ -674,7 +686,7 @@ export default function VersionDetailPage() {
                 </div>
               )}
               <label className="flex items-center gap-2 px-3 py-2 bg-slate-50 border border-dashed border-slate-200 rounded-lg cursor-pointer hover:bg-slate-100 text-sm text-slate-500">
-                <span>+ Add photos</span>
+                <span>+ {t('versionDetail.addPhotos')}</span>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -702,7 +714,7 @@ export default function VersionDetailPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 p-4" onClick={() => setViewImages(null)}>
           <div className="bg-white rounded-2xl shadow-xl border border-slate-200/80 max-w-2xl w-full max-h-[90vh] overflow-auto p-6" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-slate-900">Photos — {viewImages.title}</h2>
+              <h2 className="font-semibold text-slate-900">{t('versionDetail.photosTitle')} {viewImages.title}</h2>
               <button type="button" onClick={() => setViewImages(null)} className="p-2 text-slate-400 hover:text-slate-600 rounded-lg">×</button>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -720,17 +732,50 @@ export default function VersionDetailPage() {
         </div>
       )}
 
-      {lightboxImg && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/90 p-4" onClick={() => setLightboxImg(null)}>
-          <img src={lightboxImg} alt="" className="max-w-full max-h-[90vh] object-contain rounded-lg" onClick={(e) => e.stopPropagation()} />
-          <button type="button" onClick={() => setLightboxImg(null)} className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 text-white flex items-center justify-center">×</button>
-        </div>
-      )}
+      {lightboxImg && (() => {
+        const list = viewImages?.images ?? [];
+        const currentIndex = list.findIndex((img) => `${API_BASE}/uploads/${img.filePath}` === lightboxImg);
+        const hasMultiple = list.length > 1;
+        const goPrev = () => {
+          const prevIndex = currentIndex <= 0 ? list.length - 1 : currentIndex - 1;
+          setLightboxImg(`${API_BASE}/uploads/${list[prevIndex].filePath}`);
+        };
+        const goNext = () => {
+          const nextIndex = currentIndex >= list.length - 1 ? 0 : currentIndex + 1;
+          setLightboxImg(`${API_BASE}/uploads/${list[nextIndex].filePath}`);
+        };
+        return (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-900/90 p-4" onClick={() => setLightboxImg(null)}>
+            {hasMultiple && (
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); goPrev(); }}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors z-10"
+                  aria-label="Previous image"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); goNext(); }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors z-10"
+                  aria-label="Next image"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                </button>
+              </>
+            )}
+            <img src={lightboxImg} alt="" className="max-w-full max-h-[90vh] object-contain rounded-lg" onClick={(e) => e.stopPropagation()} />
+            <button type="button" onClick={(e) => { e.stopPropagation(); setLightboxImg(null); }} className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 text-white flex items-center justify-center hover:bg-white/30 transition-colors z-10">×</button>
+          </div>
+        );
+      })()}
 
       <ConfirmDialog
         open={!!deleteId}
-        title="Delete test case"
-        message="Are you sure you want to delete this test case?"
+        title={t('versionDetail.deleteTestCaseTitle')}
+        message={t('versionDetail.deleteTestCaseConfirm')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteId(null)}
       />

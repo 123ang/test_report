@@ -54,16 +54,16 @@ const CSVImportPage = () => {
       setVersions(data);
       if (data.length > 0) setSelectedVersion(data[0].id.toString());
     } catch (e) {
-      toast.error('Failed to load versions');
+      toast.error(t('csv.loadVersionsFailed'));
     }
   };
 
   const handleDownloadTemplate = async () => {
     try {
       await csvService.downloadTemplate();
-      toast.success('Template downloaded');
+      toast.success(t('csv.templateDownloaded'));
     } catch (error) {
-      toast.error('Failed to download template');
+      toast.error(t('csv.downloadFailed'));
     }
   };
 
@@ -72,17 +72,17 @@ const CSVImportPage = () => {
     if (selectedFile && selectedFile.type === 'text/csv') {
       setFile(selectedFile);
     } else {
-      toast.error('Please select a valid CSV file');
+      toast.error(t('csv.invalidFile'));
     }
   };
 
   const handleImport = async () => {
     if (!file) {
-      toast.error('Please select a file');
+      toast.error(t('csv.selectFileFirst'));
       return;
     }
     if (!selectedVersion) {
-      toast.error('Please select a project and version');
+      toast.error(t('csv.selectProjectVersion'));
       return;
     }
     setImporting(true);
@@ -91,7 +91,7 @@ const CSVImportPage = () => {
       toast.success(result.message);
       navigate(`/projects/${selectedProject}/versions/${selectedVersion}`);
     } catch (error) {
-      toast.error(error.response?.data?.error || 'Failed to import CSV');
+      toast.error(error.response?.data?.error || t('csv.importFailed'));
     } finally {
       setImporting(false);
     }
@@ -108,7 +108,7 @@ const CSVImportPage = () => {
           </div>
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">{t('csv.import')}</h1>
-            <p className="text-slate-600 mt-1">Upload a CSV file to add many test cases at once. Pick a project and version, then follow the format guidelines below.</p>
+            <p className="text-slate-600 mt-1">{t('csv.description')}</p>
           </div>
         </div>
       </div>
@@ -117,44 +117,44 @@ const CSVImportPage = () => {
       <section className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900 mb-1 flex items-center gap-2">
           <span className="w-9 h-9 rounded-xl bg-primary-100 text-primary-600 flex items-center justify-center text-sm font-bold">1</span>
-          Format guidelines
+          {t('csv.step1Title')}
         </h2>
-        <p className="text-slate-600 text-sm mb-6">Your CSV must have a header row. Use the template so you don’t miss any columns.</p>
+        <p className="text-slate-600 text-sm mb-6">{t('csv.step1Intro')}</p>
 
         <div className="space-y-6">
           <div>
             <h3 className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-1.5">
               <span className="w-5 h-5 rounded bg-amber-100 text-amber-700 flex items-center justify-center text-xs font-bold">!</span>
-              Required columns
+              {t('csv.requiredColumns')}
             </h3>
             <div className="flex flex-wrap gap-2">
-              <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200/80 text-amber-800 text-sm font-medium">bug</span>
-              <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200/80 text-amber-800 text-sm font-medium">test</span>
+              <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200/80 text-amber-800 text-sm font-medium">{t('csv.columnBug')}</span>
+              <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-amber-50 border border-amber-200/80 text-amber-800 text-sm font-medium">{t('csv.columnTest')}</span>
             </div>
-            <p className="text-slate-500 text-sm mt-2">Every row must have a short title (<strong>bug</strong>) and a description of the test (<strong>test</strong>).</p>
+            <p className="text-slate-500 text-sm mt-2">{t('csv.requiredColumnsDesc')}</p>
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-slate-700 mb-2">Optional columns</h3>
+            <h3 className="text-sm font-semibold text-slate-700 mb-2">{t('csv.optionalColumns')}</h3>
             <div className="flex flex-wrap gap-2 mb-2">
-              <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm font-medium">result</span>
-              <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm font-medium">severity</span>
-              <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm font-medium">priority</span>
-              <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm font-medium">notes</span>
+              <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm font-medium">{t('csv.columnResult')}</span>
+              <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm font-medium">{t('csv.columnSeverity')}</span>
+              <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm font-medium">{t('csv.columnPriority')}</span>
+              <span className="inline-flex items-center px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 text-sm font-medium">{t('csv.columnNotes')}</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <div className="rounded-xl bg-slate-50/80 p-3 border border-slate-100">
-                <p className="font-medium text-slate-700 mb-1">Severity</p>
-                <p className="text-slate-600">Critical, High, Medium, Low. Default: <strong>Low</strong>.</p>
+                <p className="font-medium text-slate-700 mb-1">{t('csv.severityLabel')}</p>
+                <p className="text-slate-600">{t('csv.severityOptions')}</p>
               </div>
               <div className="rounded-xl bg-slate-50/80 p-3 border border-slate-100">
-                <p className="font-medium text-slate-700 mb-1">Priority</p>
-                <p className="text-slate-600">High, Medium, Low. Default: <strong>Low</strong>.</p>
+                <p className="font-medium text-slate-700 mb-1">{t('csv.priorityLabel')}</p>
+                <p className="text-slate-600">{t('csv.priorityOptions')}</p>
               </div>
             </div>
           </div>
 
-          <p className="text-sm text-slate-500 border-t border-slate-100 pt-4">All imported rows are added to the version you choose in step 3. Use the template below to get the exact column names and an example row.</p>
+          <p className="text-sm text-slate-500 border-t border-slate-100 pt-4">{t('csv.step1Footer')}</p>
         </div>
       </section>
 
@@ -162,9 +162,9 @@ const CSVImportPage = () => {
       <section className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900 mb-1 flex items-center gap-2">
           <span className="w-9 h-9 rounded-xl bg-primary-100 text-primary-600 flex items-center justify-center text-sm font-bold">2</span>
-          Get the template
+          {t('csv.step2Title')}
         </h2>
-        <p className="text-slate-600 text-sm mb-4">Download the CSV template with the correct headers and a sample row. Fill it in with your test cases, then upload it in step 4.</p>
+        <p className="text-slate-600 text-sm mb-4">{t('csv.step2Intro')}</p>
         <button
           type="button"
           onClick={handleDownloadTemplate}
@@ -179,19 +179,19 @@ const CSVImportPage = () => {
       <section className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900 mb-1 flex items-center gap-2">
           <span className="w-9 h-9 rounded-xl bg-primary-100 text-primary-600 flex items-center justify-center text-sm font-bold">3</span>
-          Choose destination
+          {t('csv.step3Title')}
         </h2>
-        <p className="text-slate-600 text-sm mb-6">Select the project and version where the test cases will be added.</p>
+        <p className="text-slate-600 text-sm mb-6">{t('csv.step3Intro')}</p>
         <div className="space-y-4 max-w-md">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Project</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">{t('csv.projectLabel')}</label>
             <select
               value={selectedProject}
               onChange={(e) => setSelectedProject(e.target.value)}
               className="input w-full"
               disabled={loading}
             >
-              <option value="">Select a project...</option>
+              <option value="">{t('csv.selectProject')}</option>
               {projects.map(p => (
                 <option key={p.id} value={p.id}>{p.name}</option>
               ))}
@@ -199,13 +199,13 @@ const CSVImportPage = () => {
           </div>
           {selectedProject && (
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Version</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">{t('csv.versionLabel')}</label>
               <select
                 value={selectedVersion}
                 onChange={(e) => setSelectedVersion(e.target.value)}
                 className="input w-full"
               >
-                <option value="">Select a version...</option>
+                <option value="">{t('csv.selectVersion')}</option>
                 {versions.map(v => (
                   <option key={v.id} value={v.id}>{v.name}</option>
                 ))}
@@ -219,27 +219,30 @@ const CSVImportPage = () => {
       <section className="rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900 mb-1 flex items-center gap-2">
           <span className="w-9 h-9 rounded-xl bg-primary-100 text-primary-600 flex items-center justify-center text-sm font-bold">4</span>
-          Upload and import
+          {t('csv.step4Title')}
         </h2>
-        <p className="text-slate-600 text-sm mb-6">Select your CSV file (the one you filled from the template), then click Import.</p>
+        <p className="text-slate-600 text-sm mb-6">{t('csv.step4Intro')}</p>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">CSV file</label>
-            <div className="relative">
+            <label className="block text-sm font-medium text-slate-700 mb-1.5">{t('csv.csvFileLabel')}</label>
+            <div className="relative flex items-center gap-3">
+              <label
+                htmlFor="csv-file-input"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border-0 bg-primary-50 text-primary-700 font-medium cursor-pointer hover:bg-primary-100 transition-colors text-sm"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                {t('csv.chooseFile')}
+              </label>
               <input
+                id="csv-file-input"
                 type="file"
                 accept=".csv"
                 onChange={handleFileChange}
-                className="block w-full text-sm text-slate-600 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:bg-primary-50 file:text-primary-700 file:font-medium file:cursor-pointer hover:file:bg-primary-100 transition-colors"
+                className="hidden"
               />
+              <span className="text-sm text-slate-600">{file ? `${file.name} (${(file.size / 1024).toFixed(1)} KB)` : t('csv.noFileSelected')}</span>
             </div>
-            {file && (
-              <p className="text-sm text-slate-600 mt-2 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500" />
-                {file.name} ({(file.size / 1024).toFixed(1)} KB)
-              </p>
-            )}
           </div>
 
           <button

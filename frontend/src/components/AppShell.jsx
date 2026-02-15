@@ -6,7 +6,7 @@ import { useBreadcrumb } from '../context/BreadcrumbContext';
 
 const navItems = [
   { to: '/', labelKey: 'nav.dashboard', icon: HomeIcon },
-  { to: '/projects', label: 'Projects', icon: FolderIcon },
+  { to: '/projects', labelKey: 'nav.projects', icon: FolderIcon },
   { to: '/csv-import', labelKey: 'nav.import', icon: UploadIcon },
 ];
 

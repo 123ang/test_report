@@ -72,13 +72,13 @@ export default function DashboardPage() {
             </div>
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">{t('dashboard.title')}</h1>
-              <p className="text-slate-600 mt-1 max-w-xl">Overview of your test cases and projects. Filter by project below to focus on one at a time.</p>
+              <p className="text-slate-600 mt-1 max-w-xl">{t('dashboard.subtitle')}</p>
             </div>
           </div>
           <div className="flex-shrink-0">
-            <label className="block text-xs font-medium text-slate-500 mb-1.5">Filter by project</label>
+            <label className="block text-xs font-medium text-slate-500 mb-1.5">{t('dashboard.filterByProject')}</label>
             <select value={selectedProject} onChange={(e) => setSelectedProject(e.target.value)} className="input py-2.5 text-sm min-w-[180px] rounded-xl border-primary-200/80 focus:ring-primary-500/20">
-              <option value="">All projects</option>
+              <option value="">{t('dashboard.allProjects')}</option>
               {projects.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
           </div>
@@ -88,10 +88,10 @@ export default function DashboardPage() {
       {/* Stats row */}
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Total test cases', value: summary?.total ?? 0, icon: 'stack', color: 'primary', bg: 'bg-primary-100', text: 'text-primary-600' },
-          { label: 'Open', value: summary?.byStatus?.open ?? 0, icon: 'clock', color: 'amber', bg: 'bg-amber-100', text: 'text-amber-600' },
-          { label: 'Fixed', value: summary?.byStatus?.fixed ?? 0, icon: 'gear', color: 'primary', bg: 'bg-primary-100', text: 'text-primary-600' },
-          { label: 'Verified', value: summary?.byStatus?.verified ?? 0, icon: 'check', color: 'emerald', bg: 'bg-emerald-100', text: 'text-emerald-600' },
+          { label: t('dashboard.totalTestCases'), value: summary?.total ?? 0, icon: 'stack', color: 'primary', bg: 'bg-primary-100', text: 'text-primary-600' },
+          { label: t('status.Open'), value: summary?.byStatus?.open ?? 0, icon: 'clock', color: 'amber', bg: 'bg-amber-100', text: 'text-amber-600' },
+          { label: t('status.Fixed'), value: summary?.byStatus?.fixed ?? 0, icon: 'gear', color: 'primary', bg: 'bg-primary-100', text: 'text-primary-600' },
+          { label: t('status.Verified'), value: summary?.byStatus?.verified ?? 0, icon: 'check', color: 'emerald', bg: 'bg-emerald-100', text: 'text-emerald-600' },
         ].map((stat, i) => (
           <div key={stat.label} className="animate-fade-in-up rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm hover:shadow-md transition-all duration-300" style={{ animationDelay: `${i * 60}ms` }}>
             <div className="flex items-center gap-3">
@@ -113,8 +113,8 @@ export default function DashboardPage() {
       {/* Quick access: projects */}
       <section>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">Quick access</h2>
-          <Link to="/projects" className="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">View all projects →</Link>
+          <h2 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">{t('dashboard.quickAccess')}</h2>
+          <Link to="/projects" className="text-sm font-medium text-primary-600 hover:text-primary-700 transition-colors">{t('dashboard.viewAllProjects')} →</Link>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {projectStats.map((ps, i) => (
@@ -126,10 +126,10 @@ export default function DashboardPage() {
             >
               <p className="font-semibold text-slate-900 truncate">{ps.projectName}</p>
               <div className="mt-4 flex flex-wrap gap-2">
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs font-medium"><span className="tabular-nums font-semibold text-slate-800">{ps.total}</span> total</span>
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-50 text-amber-700 text-xs font-medium"><span className="tabular-nums font-semibold">{ps.open}</span> open</span>
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-primary-50 text-primary-700 text-xs font-medium"><span className="tabular-nums font-semibold">{ps.fixed}</span> fixed</span>
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-medium"><span className="tabular-nums font-semibold">{ps.verified}</span> verified</span>
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-xs font-medium"><span className="tabular-nums font-semibold text-slate-800">{ps.total}</span> {t('dashboard.totalShort')}</span>
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-50 text-amber-700 text-xs font-medium"><span className="tabular-nums font-semibold">{ps.open}</span> {t('dashboard.openShort')}</span>
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-primary-50 text-primary-700 text-xs font-medium"><span className="tabular-nums font-semibold">{ps.fixed}</span> {t('dashboard.fixedShort')}</span>
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-medium"><span className="tabular-nums font-semibold">{ps.verified}</span> {t('dashboard.verifiedShort')}</span>
               </div>
             </Link>
           ))}
@@ -139,7 +139,7 @@ export default function DashboardPage() {
             style={{ animationDelay: `${240 + projectStats.length * 50}ms` }}
           >
             <svg className="w-10 h-10 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" /></svg>
-            <span className="text-sm font-medium">New project</span>
+            <span className="text-sm font-medium">{t('dashboard.newProject')}</span>
           </Link>
         </div>
       </section>
@@ -151,7 +151,7 @@ export default function DashboardPage() {
             <span className="w-8 h-8 rounded-lg bg-primary-100 text-primary-600 flex items-center justify-center">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" /></svg>
             </span>
-            Status distribution
+            {t('dashboard.statusDistribution')}
           </h2>
           {pieData.length > 0 ? (
             <ResponsiveContainer width="100%" height={240}>
@@ -165,7 +165,7 @@ export default function DashboardPage() {
           ) : (
             <div className="flex flex-col items-center justify-center py-16 text-slate-400">
               <svg className="w-12 h-12 mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-              <p className="text-sm">No data yet</p>
+              <p className="text-sm">{t('dashboard.noDataYet')}</p>
             </div>
           )}
         </div>
@@ -174,7 +174,7 @@ export default function DashboardPage() {
             <span className="w-8 h-8 rounded-lg bg-primary-100 text-primary-600 flex items-center justify-center">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
             </span>
-            By project
+            {t('dashboard.byProject')}
           </h2>
           {projectStats.length > 0 ? (
             <ResponsiveContainer width="100%" height={240}>
@@ -184,15 +184,15 @@ export default function DashboardPage() {
                 <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="open" fill={STATUS_COLORS.open} name="Open" />
-                <Bar dataKey="fixed" fill={STATUS_COLORS.fixed} name="Fixed" />
-                <Bar dataKey="verified" fill={STATUS_COLORS.verified} name="Verified" />
+                <Bar dataKey="open" fill={STATUS_COLORS.open} name={t('status.Open')} />
+                <Bar dataKey="fixed" fill={STATUS_COLORS.fixed} name={t('status.Fixed')} />
+                <Bar dataKey="verified" fill={STATUS_COLORS.verified} name={t('status.Verified')} />
               </BarChart>
             </ResponsiveContainer>
           ) : (
             <div className="flex flex-col items-center justify-center py-16 text-slate-400">
               <svg className="w-12 h-12 mb-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-              <p className="text-sm">No data yet</p>
+              <p className="text-sm">{t('dashboard.noDataYet')}</p>
             </div>
           )}
         </div>
@@ -204,7 +204,7 @@ export default function DashboardPage() {
           <span className="w-8 h-8 rounded-lg bg-primary-100 text-primary-600 flex items-center justify-center">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
           </span>
-          Recent activity
+          {t('dashboard.recentActivity')}
         </h2>
         {recent.length > 0 ? (
           <ul className="space-y-2">

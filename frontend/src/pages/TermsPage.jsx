@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { LegalLayout, TableOfContents, LegalSection } from '../components/legal';
 import { useActiveSection } from '../hooks/useActiveSection';
+import { useLang } from '../context/LangContext';
 
 const TOC_ITEMS = [
   { id: 'use-of-service', label: '1. Use of the Service' },
@@ -19,6 +20,7 @@ const TOC_ITEMS = [
 const SECTION_IDS = TOC_ITEMS.map((item) => item.id);
 
 const TermsPage = () => {
+  const { t } = useLang();
   const lastUpdated = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -27,7 +29,7 @@ const TermsPage = () => {
   const activeId = useActiveSection(SECTION_IDS);
 
   return (
-    <LegalLayout title="Terms and Conditions" lastUpdated={lastUpdated}>
+    <LegalLayout title={t('legal.termsPageTitle')} lastUpdated={lastUpdated}>
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}

@@ -37,11 +37,11 @@ const ProjectDetailPage = () => {
   useEffect(() => {
     if (project) {
       setBreadcrumb([
-        { label: 'Projects', to: '/projects' },
+        { label: t('nav.projects'), to: '/projects' },
         { label: project.name, to: null },
       ]);
     }
-  }, [project, setBreadcrumb]);
+  }, [project, setBreadcrumb, t]);
   useEffect(() => { load(); }, [id]);
 
   const load = async () => {
@@ -151,14 +151,14 @@ const ProjectDetailPage = () => {
         <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
-        <span>Back to Projects</span>
+        <span>{t('projectDetail.backToProjects')}</span>
       </Link>
       <SectionHeader
         title={
           <span className="inline-flex items-center gap-2">
             {project.name}
             {project.status === 'finished' && (
-              <span className="px-2 py-0.5 text-xs font-medium rounded-md bg-slate-200 text-slate-600 border border-slate-300">Finished</span>
+              <span className="px-2 py-0.5 text-xs font-medium rounded-md bg-slate-200 text-slate-600 border border-slate-300">{t('projectDetail.finished')}</span>
             )}
           </span>
         }
@@ -166,21 +166,21 @@ const ProjectDetailPage = () => {
         action={
           project.status === 'finished' ? (
             <button type="button" onClick={() => setReopenProjectConfirm(true)} className="btn bg-slate-100 text-slate-700 hover:bg-slate-200 w-full sm:w-auto">
-              Reopen project
+              {t('projectDetail.reopenProject')}
             </button>
           ) : (
             <div className="flex flex-wrap gap-2 w-full sm:w-auto">
               <button type="button" onClick={() => setEndProjectConfirm(true)} className="btn bg-slate-100 text-slate-700 hover:bg-slate-200">
-                End project
+                {t('projectDetail.endProject')}
               </button>
               <button
                 type="button"
                 onClick={openCreate}
                 className={`btn flex-1 sm:flex-none ${canAddNewVersion ? 'btn-primary' : 'bg-slate-200 text-slate-500 cursor-not-allowed'}`}
                 disabled={!canAddNewVersion}
-                title={!canAddNewVersion ? 'Fix and verify all bugs in existing versions first' : undefined}
+                title={!canAddNewVersion ? t('projectDetail.fixAllBugsFirst') : undefined}
               >
-                + New Version
+                + {t('projectDetail.newVersion')}
               </button>
             </div>
           )
@@ -190,7 +190,7 @@ const ProjectDetailPage = () => {
       {/* Versions: latest visible; previous versions in collapsible (desktop + mobile) */}
       {versions.length > 0 ? (
         <section>
-          <h2 className="text-sm font-medium text-slate-500 uppercase tracking-wide mb-3">Versions</h2>
+          <h2 className="text-sm font-medium text-slate-500 uppercase tracking-wide mb-3">{t('projectDetail.versions')}</h2>
           {/* Latest version always visible */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             <div key={latestVersion.id} className="rounded-2xl border border-slate-200/80 bg-white p-4 sm:p-6 shadow-sm hover:shadow-md hover:border-primary-200/80 transition-all">
@@ -199,14 +199,14 @@ const ProjectDetailPage = () => {
               </Link>
               {latestVersion.description && <p className="text-sm text-slate-600 mt-1 line-clamp-2">{latestVersion.description}</p>}
               <div className="flex items-center justify-between text-xs text-slate-500 mt-2 sm:mt-3">
-                <span>{latestVersion._count?.testCases || 0} test case(s)</span>
-                {hasUnverifiedBugs(latestVersion) && <span className="text-amber-600">Not all verified</span>}
+                <span>{latestVersion._count?.testCases || 0} {t('projects.testCaseCount')}</span>
+                {hasUnverifiedBugs(latestVersion) && <span className="text-amber-600">{t('projectDetail.notAllVerified')}</span>}
               </div>
               <div className="flex items-center gap-2 mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-slate-100">
-                <Link to={`/projects/${id}/versions/${latestVersion.id}`} className="text-sm font-medium text-primary-600 hover:text-primary-700">Open →</Link>
+                <Link to={`/projects/${id}/versions/${latestVersion.id}`} className="text-sm font-medium text-primary-600 hover:text-primary-700">{t('projects.openVersionLink')}</Link>
                 <span className="flex-1" />
-                <button type="button" onClick={() => openEdit(latestVersion)} className="text-sm text-slate-500 hover:text-slate-700 py-1">Edit</button>
-                <button type="button" onClick={() => setDeleteId(latestVersion.id)} className="text-sm text-red-500 hover:text-red-700 py-1">Delete</button>
+                <button type="button" onClick={() => openEdit(latestVersion)} className="text-sm text-slate-500 hover:text-slate-700 py-1">{t('common.edit')}</button>
+                <button type="button" onClick={() => setDeleteId(latestVersion.id)} className="text-sm text-red-500 hover:text-red-700 py-1">{t('common.delete')}</button>
               </div>
             </div>
           </div>
@@ -219,7 +219,7 @@ const ProjectDetailPage = () => {
                 className="w-full flex items-center justify-between p-4 text-left hover:bg-slate-50/80 transition-colors"
               >
                 <h3 className="text-sm font-semibold text-slate-700">
-                  Previous versions ({previousVersions.length})
+                  {t('projectDetail.previousVersions')} ({previousVersions.length})
                 </h3>
                 <span className="flex-shrink-0 ml-2 text-slate-400">
                   {previousVersionsExpanded ? (
@@ -239,13 +239,13 @@ const ProjectDetailPage = () => {
                         </Link>
                         {v.description && <p className="text-sm text-slate-600 mt-1 line-clamp-2">{v.description}</p>}
                         <div className="flex items-center justify-between text-xs text-slate-500 mt-2 sm:mt-3">
-                          <span>{v._count?.testCases || 0} test case(s)</span>
+                          <span>{v._count?.testCases || 0} {t('projects.testCaseCount')}</span>
                         </div>
                         <div className="flex items-center gap-2 mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-slate-100">
-                          <Link to={`/projects/${id}/versions/${v.id}`} className="text-sm font-medium text-primary-600 hover:text-primary-700">Open →</Link>
+                          <Link to={`/projects/${id}/versions/${v.id}`} className="text-sm font-medium text-primary-600 hover:text-primary-700">{t('projects.openVersionLink')}</Link>
                           <span className="flex-1" />
-                          <button type="button" onClick={() => openEdit(v)} className="text-sm text-slate-500 hover:text-slate-700 py-1">Edit</button>
-                          <button type="button" onClick={() => setDeleteId(v.id)} className="text-sm text-red-500 hover:text-red-700 py-1">Delete</button>
+                          <button type="button" onClick={() => openEdit(v)} className="text-sm text-slate-500 hover:text-slate-700 py-1">{t('common.edit')}</button>
+                          <button type="button" onClick={() => setDeleteId(v.id)} className="text-sm text-red-500 hover:text-red-700 py-1">{t('common.delete')}</button>
                         </div>
                       </div>
                     ))}
@@ -257,8 +257,8 @@ const ProjectDetailPage = () => {
         </section>
       ) : (
         <div className="rounded-2xl border border-slate-200/80 bg-white p-8 sm:p-12 text-center shadow-sm">
-          <p className="text-slate-500 mb-4">No versions yet. Create your first version.</p>
-          <button type="button" onClick={openCreate} className="btn btn-primary">+ New Version</button>
+          <p className="text-slate-500 mb-4">{t('projects.noVersionsYetCreate')}</p>
+          <button type="button" onClick={openCreate} className="btn btn-primary">+ {t('projectDetail.newVersion')}</button>
         </div>
       )}
 
@@ -281,10 +281,11 @@ const ProjectDetailPage = () => {
               )}
             </span>
           </button>
-          <div className={`border-t border-slate-100 ${membersExpanded ? 'block' : 'hidden sm:block'}`}>
-            <div className="p-4 pt-0">
-              <button type="button" onClick={() => setShowMemberForm(true)} className="btn bg-slate-100 text-slate-700 hover:bg-slate-200 text-sm w-full sm:w-auto mb-3">
-                + {t('members.addMember')}
+          <div className={`border-t border-slate-200/80 ${membersExpanded ? 'block' : 'hidden sm:block'}`}>
+            <div className="p-4 pt-4">
+              <button type="button" onClick={() => setShowMemberForm(true)} className="btn bg-slate-100 text-slate-700 hover:bg-slate-200 text-sm w-full sm:w-auto inline-flex items-center gap-2 mb-4">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                {t('members.addMember')}
               </button>
               {project.members && project.members.length > 0 ? (
                 <div className="space-y-1 max-h-[280px] sm:max-h-none overflow-y-auto">
@@ -322,17 +323,17 @@ const ProjectDetailPage = () => {
       {showForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-3 sm:p-4 overflow-y-auto">
           <div className="bg-white rounded-xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 my-4 sm:my-8" style={{ maxWidth: 'min(28rem, calc(100vw - 1.5rem))' }}>
-            <h2 className="text-lg font-semibold mb-4">{editVersion ? 'Edit Version' : 'New Version'}</h2>
+            <h2 className="text-lg font-semibold mb-4">{editVersion ? t('projectDetail.editVersion') : t('projectDetail.newVersion')}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Version Name *</label>
                 <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                  className="input w-full" placeholder="e.g. v1.0" />
+                  className="input w-full" placeholder={t('projectDetail.versionNamePlaceholder')} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                 <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })}
-                  className="input w-full" rows={3} placeholder="Optional" />
+                  className="input w-full" rows={3} placeholder={t('projectDetail.versionDescriptionPlaceholder')} />
               </div>
               <div className="flex gap-3 pt-2">
                 <button type="submit" className="btn btn-primary flex-1">{editVersion ? 'Save' : 'Create'}</button>
@@ -352,7 +353,7 @@ const ProjectDetailPage = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{t('members.email')} *</label>
                 <input type="email" required value={memberEmail} onChange={e => setMemberEmail(e.target.value)}
-                  className="input w-full" placeholder="user@example.com" />
+                  className="input w-full" placeholder={t('projectDetail.memberEmailPlaceholder')} />
               </div>
               <div className="flex gap-3 pt-2">
                 <button type="submit" className="btn btn-primary flex-1">{t('members.addButton')}</button>
@@ -363,10 +364,10 @@ const ProjectDetailPage = () => {
         </div>
       )}
 
-      <ConfirmDialog open={!!deleteId} title="Delete Version" message="This will delete the version and all its test cases. Are you sure?" onConfirm={handleDelete} onCancel={() => setDeleteId(null)} />
-      <ConfirmDialog open={!!removeMemberId} title={t('members.removeMember')} message="Remove this member from the project?" onConfirm={handleRemoveMember} onCancel={() => setRemoveMemberId(null)} />
-      <ConfirmDialog open={reopenProjectConfirm} title="Reopen project" message="Move this project back to active projects?" confirmLabel="Reopen" onConfirm={handleReopenProject} onCancel={() => setReopenProjectConfirm(false)} />
-      <ConfirmDialog open={endProjectConfirm} title="End project" message="Mark this project as finished? You can reopen it later from Finished projects." confirmLabel="End" onConfirm={handleEndProject} onCancel={() => setEndProjectConfirm(false)} />
+      <ConfirmDialog open={!!deleteId} title={t('projectDetail.deleteVersion')} message={t('projectDetail.deleteVersionConfirm')} onConfirm={handleDelete} onCancel={() => setDeleteId(null)} />
+      <ConfirmDialog open={!!removeMemberId} title={t('members.removeMember')} message={t('members.removeMemberConfirm')} onConfirm={handleRemoveMember} onCancel={() => setRemoveMemberId(null)} />
+      <ConfirmDialog open={reopenProjectConfirm} title={t('projects.reopenProjectTitle')} message={t('projects.reopenProjectMessage')} confirmLabel={t('projects.reopenConfirmLabel')} onConfirm={handleReopenProject} onCancel={() => setReopenProjectConfirm(false)} />
+      <ConfirmDialog open={endProjectConfirm} title={t('projects.endProject')} message={t('projectDetail.endProjectConfirm')} confirmLabel={t('projectDetail.endConfirmLabel')} onConfirm={handleEndProject} onCancel={() => setEndProjectConfirm(false)} />
     </div>
   );
 };
