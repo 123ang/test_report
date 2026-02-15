@@ -2,10 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Brand palette for backgrounds (dark-mode ready: override in .dark) */
+:root {
+  --brand-bg: #F7F8FA;
+  --brand-navy: #3E5667;
+  --brand-accent: #6FA8DC;
+  --brand-red: #E57373;
+}
+
+/* Visible dotted grid – brand navy ~6% – adds depth without noise */
+:root {
+  --bg-pattern: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='2' cy='2' r='0.6' fill='%233E5667' fill-opacity='0.06'/%3E%3Ccircle cx='10' cy='2' r='0.6' fill='%233E5667' fill-opacity='0.06'/%3E%3Ccircle cx='2' cy='10' r='0.6' fill='%233E5667' fill-opacity='0.06'/%3E%3Ccircle cx='10' cy='10' r='0.6' fill='%233E5667' fill-opacity='0.06'/%3E%3C/svg%3E");
+}
+
 @layer base {
   body {
-    @apply bg-[#f8fafc] text-slate-800 antialiased;
+    @apply text-brand-navy antialiased font-sans;
+    min-height: 100vh;
+    background-color: var(--brand-bg);
   }
+}
+
+/* Single full-bleed page background — fixed behind all content, no section seams */
+.page-bg-global {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  background-color: var(--brand-bg);
+  background-image:
+    radial-gradient(ellipse 150% 120% at 50% -25%, rgba(111, 168, 220, 0.12) 0%, rgba(111, 168, 220, 0.03) 40%, transparent 65%),
+    linear-gradient(to top, rgba(62, 86, 103, 0.07) 0%, rgba(62, 86, 103, 0.02) 35%, transparent 55%),
+    var(--bg-pattern);
+  background-size: 100% 100%, 100% 100%, 16px 16px;
+  background-position: 0 0, 0 0, 0 0;
+  background-repeat: no-repeat, no-repeat, repeat;
+}
+
+/* Full-bleed section overlay (no clipping by max-w); use gradient fades, low opacity */
+.section-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
 @layer components {
@@ -68,6 +112,113 @@
   .badge-skipped {
     @apply badge bg-gray-100 text-gray-800;
   }
+
+  /* ---------- Background system (brand palette only) – clear depth & rhythm ---------- */
+
+  /* Hero: visible glow orbs + mesh so product feels “in space” */
+  .bg-hero {
+    position: relative;
+    isolation: isolate;
+    background-image:
+      radial-gradient(ellipse 70% 55% at 75% 35%, rgba(111, 168, 220, 0.22) 0%, rgba(111, 168, 220, 0.06) 45%, transparent 70%),
+      radial-gradient(ellipse 55% 50% at 25% 55%, rgba(62, 86, 103, 0.1) 0%, transparent 55%),
+      radial-gradient(ellipse 100% 80% at 50% 20%, rgba(111, 168, 220, 0.12) 0%, transparent 50%);
+    background-size: 100% 100%;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+  }
+  /* Blurred glow blob behind hero content */
+  .bg-hero::before {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    top: 20%;
+    right: 10%;
+    width: min(80vw, 420px);
+    height: min(80vw, 420px);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(111, 168, 220, 0.35) 0%, rgba(111, 168, 220, 0.08) 45%, transparent 70%);
+    filter: blur(56px);
+    pointer-events: none;
+  }
+  .bg-hero::after {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    background-image: var(--bg-pattern);
+    background-size: 16px 16px;
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  .bg-hero > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Section: clear “panel” – frosted white with soft top fade */
+  .bg-section {
+    background-color: rgba(255, 255, 255, 0.72);
+    background-image:
+      linear-gradient(to bottom, rgba(247, 248, 250, 0.9) 0%, transparent 25%),
+      linear-gradient(to top, rgba(247, 248, 250, 0.4) 0%, transparent 15%);
+  }
+
+  /* Section alternate: visible navy tint for rhythm */
+  .bg-section-alt {
+    background-color: rgba(62, 86, 103, 0.055);
+    background-image:
+      linear-gradient(to bottom, rgba(62, 86, 103, 0.04) 0%, transparent 20%),
+      linear-gradient(to top, rgba(62, 86, 103, 0.06) 0%, transparent 25%);
+  }
+
+  /* Soft: clear “pool” of light (stack area, footer) */
+  .bg-soft {
+    background-color: rgba(247, 248, 250, 0.85);
+    background-image:
+      radial-gradient(ellipse 100% 70% at 50% 20%, rgba(111, 168, 220, 0.12) 0%, transparent 55%),
+      linear-gradient(to bottom, transparent 0%, rgba(62, 86, 103, 0.03) 100%);
+  }
+
+  /* CTA: strong gradient band – clearly its own block */
+  .bg-cta {
+    background-image: linear-gradient(145deg, rgba(62, 86, 103, 0.11) 0%, rgba(111, 168, 220, 0.18) 45%, rgba(62, 86, 103, 0.08) 100%);
+    background-color: rgba(247, 248, 250, 0.5);
+  }
+}
+
+/* Dark mode: gradients adapt, no pure white (enable when .dark exists) */
+.dark body {
+  --brand-bg: #1a1f24;
+  background-image:
+    radial-gradient(ellipse 150% 120% at 50% -25%, rgba(111, 168, 220, 0.18) 0%, rgba(111, 168, 220, 0.05) 40%, transparent 65%),
+    linear-gradient(to top, rgba(62, 86, 103, 0.14) 0%, transparent 50%),
+    var(--bg-pattern);
+}
+.dark .bg-section {
+  background-color: rgba(62, 86, 103, 0.12);
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.08), transparent 25%);
+}
+.dark .bg-section-alt {
+  background-color: rgba(111, 168, 220, 0.08);
+  background-image: linear-gradient(to top, rgba(62, 86, 103, 0.1) 0%, transparent 25%);
+}
+.dark .bg-soft {
+  background-color: rgba(30, 38, 44, 0.7);
+  background-image: radial-gradient(ellipse 100% 70% at 50% 20%, rgba(111, 168, 220, 0.14) 0%, transparent 55%);
+}
+.dark .bg-cta {
+  background-image: linear-gradient(145deg, rgba(62, 86, 103, 0.2) 0%, rgba(111, 168, 220, 0.22) 45%, rgba(62, 86, 103, 0.12) 100%);
+  background-color: rgba(0, 0, 0, 0.15);
+}
+.dark .bg-hero {
+  background-image:
+    radial-gradient(ellipse 70% 55% at 75% 35%, rgba(111, 168, 220, 0.28) 0%, transparent 70%),
+    radial-gradient(ellipse 55% 50% at 25% 55%, rgba(62, 86, 103, 0.15) 0%, transparent 55%),
+    radial-gradient(ellipse 100% 80% at 50% 20%, rgba(111, 168, 220, 0.15) 0%, transparent 50%);
+}
+.dark .bg-hero::before {
+  background: radial-gradient(circle, rgba(111, 168, 220, 0.4) 0%, transparent 70%);
 }
 
 @keyframes sheet-slide-in {
@@ -105,6 +256,77 @@
 .animate-modal-in {
   animation: modal-in 0.2s ease-out;
 }
+
+/* Scroll-triggered animations (use with .in-view from useInView) */
+.scroll-animate {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.scroll-animate.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-animate-left {
+  opacity: 0;
+  transform: translateX(-24px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.scroll-animate-left.in-view {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-animate-right {
+  opacity: 0;
+  transform: translateX(24px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.scroll-animate-right.in-view {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-animate-scale {
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+.scroll-animate-scale.in-view {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Stagger delays for children */
+.scroll-stagger-1 { transition-delay: 0.1s; }
+.scroll-stagger-2 { transition-delay: 0.2s; }
+.scroll-stagger-3 { transition-delay: 0.3s; }
+.scroll-stagger-4 { transition-delay: 0.4s; }
+
+/* Stacking cards: each card slides up, scales in, and “lands” with shadow */
+.stack-card {
+  opacity: 0;
+  transform: translateY(80px) scale(0.92) rotateX(12deg);
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.6s ease-out;
+  box-shadow:
+    0 24px 48px -12px rgb(62 86 103 / 0.15),
+    0 12px 24px -8px rgb(62 86 103 / 0.08);
+  transform-origin: center bottom;
+}
+.stack-card.in-view {
+  opacity: 1;
+  transform: translateY(0) scale(1) rotateX(0);
+  box-shadow:
+    0 8px 16px -4px rgb(62 86 103 / 0.06),
+    0 4px 8px -2px rgb(62 86 103 / 0.04);
+}
+.stack-card-delay-0 { transition-delay: 0s; }
+.stack-card-delay-1 { transition-delay: 0.22s; }
+.stack-card-delay-2 { transition-delay: 0.44s; }
 
 /* Mobile responsive utilities */
 @layer utilities {

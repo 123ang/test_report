@@ -6,6 +6,8 @@ import { LangProvider } from './context/LangContext';
 import { BreadcrumbProvider } from './context/BreadcrumbContext';
 import AppShell from './components/AppShell';
 import LandingPage from './pages/LandingPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsPage from './pages/TermsPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
@@ -38,6 +40,8 @@ function App() {
           <Routes>
             {/* Public landing page */}
             <Route path="/" element={<PublicRoute><LandingPage /></PublicRoute>} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
             <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
             <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
 

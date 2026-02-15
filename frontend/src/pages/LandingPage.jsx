@@ -1,42 +1,60 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useLang } from '../context/LangContext';
+import { StackedFeaturesSection } from '../components/landing/StackedFeaturesSection';
+import { PageBackground } from '../components/landing/PageBackground';
+
+function useInView(options = {}) {
+  const ref = useRef(null);
+  const [inView, setInView] = useState(false);
+  const { rootMargin = '0px 0px -80px 0px', threshold = 0.1 } = options;
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setInView(true);
+      },
+      { rootMargin, threshold }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [rootMargin, threshold]);
+
+  return [ref, inView];
+}
 
 const LandingPage = () => {
   const { t } = useLang();
+  const [heroRef, heroInView] = useInView();
+  const [workflowRef, workflowInView] = useInView();
+  const [reportRef, reportInView] = useInView();
+  const [trustRef, trustInView] = useInView();
+  const [ctaRef, ctaInView] = useInView();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50">
-      {/* Background decoration */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-sky-100/50 blur-3xl" />
-        <div className="absolute top-1/2 -left-40 w-80 h-80 rounded-full bg-indigo-100/40 blur-3xl" />
-        <div className="absolute -bottom-40 right-1/3 w-80 h-80 rounded-full bg-slate-100/60 blur-3xl" />
-      </div>
-
-      {/* Header / Nav */}
-      <header className="relative z-10">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+    <div className="min-h-screen relative overflow-x-hidden">
+      <PageBackground />
+      {/* Header */}
+      <header className="sticky top-0 z-20 w-full border-b border-brand-navy/8 bg-brand-bg/95 backdrop-blur-sm">
+        <nav className="w-full max-w-7xl mx-auto px-6 md:px-10 lg:px-12 py-5 md:py-6">
           <div className="flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-white shadow-sm border border-slate-100 p-2 flex items-center justify-center">
-                <img src="/logo.png" alt="Test Report" className="w-full h-full object-contain" />
-              </div>
-              <span className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">Test Report</span>
-            </div>
-
-            {/* Auth buttons */}
-            <div className="flex items-center gap-3">
+            <Link to="/" className="flex items-center gap-3 min-w-0">
+              <img src="/logo.png" alt="" className="h-8 w-8 shrink-0 object-contain" aria-hidden />
+              <span className="text-lg font-semibold text-brand-navy tracking-tight truncate">Test Report</span>
+            </Link>
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
               <Link
                 to="/login"
-                className="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                className="px-4 py-2.5 text-sm font-medium text-brand-navy/70 hover:text-brand-navy rounded-lg hover:bg-brand-navy/5 transition-colors"
               >
                 {t('auth.login')}
               </Link>
               <Link
                 to="/register"
-                className="px-4 py-2.5 text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 rounded-xl shadow-sm transition-colors"
+                className="px-5 py-2.5 text-sm font-medium text-white bg-brand-navy hover:bg-brand-navy-light rounded-lg transition-colors"
               >
                 {t('landing.getStarted')}
               </Link>
@@ -45,146 +63,277 @@ const LandingPage = () => {
         </nav>
       </header>
 
-      {/* Hero Section */}
-      <main className="relative z-10">
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-20 pb-16 sm:pb-24">
-          <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 tracking-tight leading-tight">
-              {t('landing.heroTitle')}
-            </h1>
-            <p className="mt-6 text-lg sm:text-xl text-slate-600 leading-relaxed">
-              {t('landing.heroSubtitle')}
+      <main>
+        {/* 1) Hero */}
+        <section className="relative py-12 md:py-16 lg:py-24 overflow-x-clip">
+          <div className="section-overlay bg-gradient-to-b from-[rgba(111,168,220,0.06)] via-transparent to-transparent" />
+          <div className="max-w-6xl mx-auto px-6 md:px-8">
+            <motion.div
+              ref={heroRef}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center"
+              initial={{ opacity: 0, y: 24 }}
+              animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <div className="space-y-4">
+                <h1 className="text-4xl sm:text-5xl lg:text-[3.25rem] font-bold text-brand-navy tracking-tight leading-[1.15]">
+                  {t('landing.heroTitle')}
+                  <span className="block mt-2 w-24 h-1 rounded-full bg-brand-accent/80" aria-hidden />
+                </h1>
+                <p className="text-lg sm:text-xl text-brand-navy/70 max-w-lg">
+                  {t('landing.heroSubtitle')}
+                </p>
+                <div>
+                  <Link
+                    to="/register"
+                    className="inline-flex px-6 py-3.5 text-base font-medium text-white bg-brand-navy hover:bg-brand-accent rounded-lg transition-colors"
+                  >
+                    {t('landing.startFree')}
+                  </Link>
+                </div>
+              </div>
+              <div className="relative flex justify-center lg:justify-end">
+                <ProductMockup />
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* 2) Stacked Preview - folder stacking scroll section */}
+        <StackedFeaturesSection />
+
+        {/* 3) Workflow */}
+        <section className="relative py-10 md:py-12 lg:py-16">
+          <div className="section-overlay bg-gradient-to-b from-transparent via-[rgba(111,168,220,0.04)] to-transparent" />
+          <div ref={workflowRef} className="max-w-6xl mx-auto px-6 md:px-8 relative">
+            <motion.p
+              className="text-sm font-medium text-brand-accent uppercase tracking-wider mb-3"
+              initial={{ opacity: 0, y: 12 }}
+              animate={workflowInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.4 }}
+            >
+              {t('landing.workflowLabel')}
+            </motion.p>
+            <motion.h2
+              className="text-3xl sm:text-4xl font-bold text-brand-navy tracking-tight mb-8 md:mb-10"
+              initial={{ opacity: 0, y: 12 }}
+              animate={workflowInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.4, delay: 0.08 }}
+            >
+              {t('landing.workflowTitle')}
+            </motion.h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+              <WorkflowStep number={1} title={t('landing.workflowStep1')} description={t('landing.workflowStep1Desc')} variant="navy" inView={workflowInView} delay={0} />
+              <WorkflowStep number={2} title={t('landing.workflowStep2')} description={t('landing.workflowStep2Desc')} variant="accent" inView={workflowInView} delay={0.12} />
+              <WorkflowStep number={3} title={t('landing.workflowStep3')} description={t('landing.workflowStep3Desc')} variant="red" inView={workflowInView} delay={0.24} />
+            </div>
+          </div>
+        </section>
+
+        {/* 4) Report Showcase */}
+        <section className="relative py-12 md:py-16 lg:py-24">
+          <div className="section-overlay bg-gradient-to-b from-transparent via-[rgba(62,86,103,0.03)] to-transparent" />
+          <div ref={reportRef} className="max-w-6xl mx-auto px-6 md:px-8">
+            <p className={`text-sm font-medium text-brand-accent uppercase tracking-wider mb-3 scroll-animate ${reportInView ? 'in-view' : ''}`}>
+              {t('landing.reportLabel')}
             </p>
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <h2 className={`text-3xl sm:text-4xl font-bold text-brand-navy tracking-tight mb-8 md:mb-10 scroll-animate scroll-stagger-1 ${reportInView ? 'in-view' : ''}`}>
+              {t('landing.reportTitle')}
+            </h2>
+            <div className={`scroll-animate-scale ${reportInView ? 'in-view' : ''}`}>
+              <ReportPreview />
+            </div>
+          </div>
+        </section>
+
+        {/* 5) Trust */}
+        <section className="relative py-12 md:py-16 lg:py-24">
+          <div className="section-overlay bg-gradient-to-b from-[rgba(111,168,220,0.04)] via-transparent to-transparent" />
+          <div ref={trustRef} className="max-w-6xl mx-auto px-6 md:px-8">
+            <h2 className={`text-3xl sm:text-4xl font-bold text-brand-navy tracking-tight text-center mb-8 md:mb-10 scroll-animate ${trustInView ? 'in-view' : ''}`}>
+              {t('landing.trustTitle')}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-10">
+              <TrustItem title={t('landing.trust1')} color="navy" inView={trustInView} delay={1} />
+              <TrustItem title={t('landing.trust2')} color="accent" inView={trustInView} delay={2} />
+              <TrustItem title={t('landing.trust3')} color="red" inView={trustInView} delay={3} />
+            </div>
+          </div>
+        </section>
+
+        {/* 6) Final CTA */}
+        <section className="relative py-12 md:py-16 lg:py-24">
+          <div className="section-overlay bg-gradient-to-b from-transparent via-[rgba(62,86,103,0.05)] to-[rgba(111,168,220,0.06)]" />
+          <div ref={ctaRef} className={`max-w-3xl mx-auto px-6 md:px-8 text-center scroll-animate ${ctaInView ? 'in-view' : ''}`}>
+            <p className="text-xl sm:text-2xl text-brand-navy/80 font-medium">
+              {t('landing.finalCta')}
+            </p>
+            <div className="mt-8 md:mt-10">
               <Link
                 to="/register"
-                className="w-full sm:w-auto px-8 py-4 text-base font-semibold text-white bg-primary-600 hover:bg-primary-700 rounded-xl shadow-lg shadow-primary-500/25 transition-all hover:shadow-xl hover:shadow-primary-500/30"
+                className="inline-flex px-8 py-4 text-base font-medium text-white bg-brand-navy hover:bg-brand-accent rounded-lg transition-colors"
               >
                 {t('landing.startFree')}
               </Link>
-              <Link
-                to="/login"
-                className="w-full sm:w-auto px-8 py-4 text-base font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl shadow-sm transition-colors"
-              >
-                {t('auth.login')}
-              </Link>
             </div>
-          </div>
-        </section>
-
-        {/* Features Section */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">{t('landing.featuresTitle')}</h2>
-            <p className="mt-4 text-slate-600">{t('landing.featuresSubtitle')}</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {/* Feature 1 */}
-            <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center mb-5">
-                <svg className="w-6 h-6 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">{t('landing.feature1Title')}</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">{t('landing.feature1Desc')}</p>
-            </div>
-
-            {/* Feature 2 */}
-            <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center mb-5">
-                <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">{t('landing.feature2Title')}</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">{t('landing.feature2Desc')}</p>
-            </div>
-
-            {/* Feature 3 */}
-            <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center mb-5">
-                <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">{t('landing.feature3Title')}</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">{t('landing.feature3Desc')}</p>
-            </div>
-
-            {/* Feature 4 */}
-            <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center mb-5">
-                <svg className="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">{t('landing.feature4Title')}</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">{t('landing.feature4Desc')}</p>
-            </div>
-
-            {/* Feature 5 */}
-            <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-rose-100 flex items-center justify-center mb-5">
-                <svg className="w-6 h-6 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">{t('landing.feature5Title')}</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">{t('landing.feature5Desc')}</p>
-            </div>
-
-            {/* Feature 6 */}
-            <div className="bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-              <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center mb-5">
-                <svg className="w-6 h-6 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">{t('landing.feature6Title')}</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">{t('landing.feature6Desc')}</p>
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-          <div className="bg-gradient-to-br from-primary-600 to-primary-700 rounded-3xl p-8 sm:p-12 lg:p-16 text-center shadow-xl">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-4">
-              {t('landing.ctaTitle')}
-            </h2>
-            <p className="text-primary-100 text-lg mb-8 max-w-2xl mx-auto">
-              {t('landing.ctaSubtitle')}
-            </p>
-            <Link
-              to="/register"
-              className="inline-flex px-8 py-4 text-base font-semibold text-primary-600 bg-white hover:bg-primary-50 rounded-xl shadow-lg transition-colors"
-            >
-              {t('landing.startFree')}
-            </Link>
           </div>
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="relative z-10 border-t border-slate-200 bg-white/80 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-slate-100 p-1.5 flex items-center justify-center">
-                <img src="/logo.png" alt="Test Report" className="w-full h-full object-contain" />
-              </div>
-              <span className="text-sm font-medium text-slate-600">Test Report</span>
-            </div>
-            <p className="text-sm text-slate-500">
-              © {new Date().getFullYear()} Test Report. {t('landing.allRightsReserved')}
+      <footer className="relative border-t border-brand-navy/10">
+        <div className="section-overlay bg-gradient-to-b from-transparent to-[rgba(62,86,103,0.02)]" />
+        <div className="max-w-5xl mx-auto px-6 md:px-10 py-7 md:py-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+            <p className="text-sm text-brand-navy/50 order-2 sm:order-1">
+              © {new Date().getFullYear()} Sun Tzu Technologies. {t('landing.allRightsReserved')}
             </p>
+            <nav className="flex items-center gap-x-6 text-sm order-1 sm:order-2">
+              <Link
+                to="/privacy-policy"
+                className="text-brand-navy/60 hover:text-brand-accent transition-colors"
+              >
+                Privacy Policy
+              </Link>
+              <Link
+                to="/terms"
+                className="text-brand-navy/60 hover:text-brand-accent transition-colors"
+              >
+                Terms
+              </Link>
+            </nav>
           </div>
         </div>
       </footer>
     </div>
   );
 };
+
+function ProductMockup() {
+  return (
+    <div className="w-full max-w-md aspect-[4/3] bg-white border border-brand-navy/10 rounded-xl overflow-hidden flex flex-col shadow-sm">
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-brand-navy/10 bg-brand-bg">
+        <div className="w-2 h-2 rounded-full bg-brand-red" />
+        <div className="w-2 h-2 rounded-full bg-brand-accent/60" />
+        <div className="w-2 h-2 rounded-full bg-brand-navy/30" />
+      </div>
+      <div className="flex-1 p-4 flex flex-col gap-3">
+        <div className="h-3 w-3/4 rounded bg-brand-navy/10" />
+        <div className="h-3 w-full rounded bg-brand-navy/5" />
+        <div className="h-3 w-5/6 rounded bg-brand-navy/5" />
+        <div className="mt-4 flex gap-2">
+          <div className="h-8 flex-1 rounded bg-brand-accent/20 border border-brand-accent/30" />
+          <div className="h-8 w-16 rounded bg-brand-navy/10" />
+        </div>
+        <div className="mt-2 space-y-2">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex gap-2 items-center">
+              <div className="w-4 h-4 rounded border border-brand-navy/20" />
+              <div className="h-2 flex-1 rounded bg-brand-navy/5" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WorkflowStep({ number, title, description, variant = 'navy', inView, delay = 0 }) {
+  const circleClass = {
+    navy: 'bg-brand-navy text-white',
+    accent: 'bg-brand-accent text-white',
+    red: 'bg-brand-red text-white',
+  }[variant];
+  const borderClass = {
+    navy: 'border-brand-navy/10',
+    accent: 'border-brand-accent/20',
+    red: 'border-brand-red/20',
+  }[variant];
+  return (
+    <motion.article
+      className={`relative flex flex-col p-6 md:p-7 rounded-xl border ${borderClass} bg-white/60 backdrop-blur-sm transition-shadow duration-300 hover:shadow-md hover:-translate-y-1`}
+      initial={{ opacity: 0, y: 24 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
+    >
+      <motion.div
+        className={`flex items-center justify-center w-11 h-11 rounded-full font-semibold text-sm shrink-0 mb-4 ${circleClass}`}
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={inView ? { opacity: 1, scale: 1 } : {}}
+        transition={{ duration: 0.4, delay: delay + 0.08, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {number}
+      </motion.div>
+      <motion.h3
+        className="text-lg font-semibold text-brand-navy mb-2"
+        initial={{ opacity: 0, x: -6 }}
+        animate={inView ? { opacity: 1, x: 0 } : {}}
+        transition={{ duration: 0.4, delay: delay + 0.14 }}
+      >
+        {title}
+      </motion.h3>
+      <motion.p
+        className="text-sm text-brand-navy/70 leading-relaxed"
+        initial={{ opacity: 0, y: 6 }}
+        animate={inView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.4, delay: delay + 0.2 }}
+      >
+        {description}
+      </motion.p>
+    </motion.article>
+  );
+}
+
+function ReportPreview() {
+  const { t } = useLang();
+  return (
+    <div className="bg-white border border-brand-navy/12 rounded-lg overflow-hidden max-w-2xl mx-auto">
+      <div className="px-6 py-4 border-b border-brand-navy/10 bg-brand-bg/80 flex items-center gap-3">
+        <div className="w-1 h-8 rounded-full bg-brand-accent/70" aria-hidden />
+        <div className="flex items-center justify-between flex-1">
+          <span className="text-sm font-medium text-brand-navy">Test Run Report</span>
+          <span className="text-xs text-brand-navy/60">v1.2 · {new Date().toLocaleDateString()}</span>
+        </div>
+      </div>
+      <div className="p-6 space-y-4">
+        <div className="flex items-center gap-3">
+          <span className="px-2.5 py-1 text-xs font-medium rounded bg-brand-accent/15 text-brand-navy">
+            {t('status.pass')}
+          </span>
+          <span className="text-brand-navy font-medium">Login flow — desktop</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="px-2.5 py-1 text-xs font-medium rounded bg-brand-red/15 text-brand-navy">
+            {t('status.fail')}
+          </span>
+          <span className="text-brand-navy font-medium">Checkout — mobile</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <span className="px-2.5 py-1 text-xs font-medium rounded bg-brand-navy/10 text-brand-navy">
+            {t('status.skipped')}
+          </span>
+          <span className="text-brand-navy font-medium">Export CSV</span>
+        </div>
+      </div>
+      <div className="px-6 py-3 border-t border-brand-navy/10 bg-brand-bg/50 text-sm text-brand-navy/70">
+        12 {t('dashboard.total')} · 8 {t('status.pass')} · 2 {t('status.fail')}
+      </div>
+    </div>
+  );
+}
+
+function TrustItem({ title, color = 'navy', inView, delay = 0 }) {
+  const dotClass = {
+    navy: 'bg-brand-navy',
+    accent: 'bg-brand-accent',
+    red: 'bg-brand-red',
+  }[color];
+  const delayClass = delay === 1 ? 'scroll-stagger-1' : delay === 2 ? 'scroll-stagger-2' : 'scroll-stagger-3';
+  return (
+    <div className={`text-center scroll-animate ${delayClass} ${inView ? 'in-view' : ''}`}>
+      <div className={`w-3 h-3 rounded-full mx-auto mb-4 ${dotClass}`} />
+      <p className="text-lg font-medium text-brand-navy">{title}</p>
+    </div>
+  );
+}
 
 export default LandingPage;
