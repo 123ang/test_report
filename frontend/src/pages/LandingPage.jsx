@@ -34,9 +34,8 @@ const LandingPage = () => {
   const [trustRef, trustInView] = useInView();
   const [ctaRef, ctaInView] = useInView();
 
-  // Avoid overflow-x-hidden on root: it can create a containing block and break position:sticky in the stack section.
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen relative w-full min-w-0 overflow-x-hidden">
       <PageBackground />
       {/* Header */}
       <header className="sticky top-0 z-20 w-full border-b border-brand-navy/8 bg-brand-bg/95 backdrop-blur-sm">
@@ -137,7 +136,7 @@ const LandingPage = () => {
         <StackedFeaturesSection />
 
         {/* 3) Workflow */}
-        <section className="relative py-6 md:py-8 lg:py-12">
+        <section className="relative py-6 md:py-8 lg:py-12 overflow-x-hidden">
           <div className="section-overlay bg-gradient-to-b from-transparent via-[rgba(111,168,220,0.04)] to-transparent" />
           <div ref={workflowRef} className="max-w-6xl mx-auto px-6 md:px-8 relative">
             <motion.p

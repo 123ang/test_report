@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../context/LangContext';
+import { PublicHeader } from '../components/landing/PublicHeader';
+import { PublicFooter } from '../components/landing/PublicFooter';
 
 const RegisterPage = () => {
   const [name, setName] = useState('');
@@ -35,13 +37,16 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#f8fafc] px-4 py-12 overflow-y-auto">
-      <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-        <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-sky-100/40 blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-slate-100/60 blur-3xl" />
-      </div>
+    <div className="min-h-screen flex flex-col w-full min-w-0 overflow-x-hidden bg-[#f8fafc]">
+      <PublicHeader hideGetStarted />
 
-      <div className="relative w-full max-w-[400px] my-4">
+      <main className="flex-1 flex items-center justify-center px-4 py-12 overflow-y-auto">
+        <div className="fixed inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+          <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full bg-sky-100/40 blur-3xl" />
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full bg-slate-100/60 blur-3xl" />
+        </div>
+
+        <div className="relative w-full max-w-[400px] my-4">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white shadow-sm border border-slate-100/80 p-3 mb-5">
             <img src="/logo.png" alt="Test Report" className="w-full h-full object-contain" />
@@ -102,7 +107,10 @@ const RegisterPage = () => {
             <Link to="/login" className="font-medium text-primary-600 hover:text-primary-700 transition-colors">{t('auth.login')}</Link>
           </p>
         </div>
-      </div>
+        </div>
+      </main>
+
+      <PublicFooter />
     </div>
   );
 };
