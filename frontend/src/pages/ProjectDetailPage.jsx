@@ -56,7 +56,7 @@ const ProjectDetailPage = () => {
 
   const openCreate = () => {
     if (!canAddNewVersion) {
-      toast.error('Fix and verify all bugs in existing versions before adding a new version.');
+      toast.error(t('projectDetail.fixAllBugsFirst'));
       return;
     }
     setEditVersion(null);

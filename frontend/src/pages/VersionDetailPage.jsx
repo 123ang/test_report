@@ -598,7 +598,7 @@ export default function VersionDetailPage() {
         )}
       </Sheet>
 
-      {/* Create / Edit Bug Sheet */}
+      {/* Create / Edit Test Case Sheet */}
       <Sheet
         open={showCreateSheet}
         onClose={() => { setShowCreateSheet(false); setPendingFiles([]); }}
