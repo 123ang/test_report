@@ -9,6 +9,7 @@ import { Badge, Sheet } from '../components/ui';
 import { BUG_TEMPLATES, getBugTemplate } from '../utils/bugTemplates';
 import Loading from '../components/Loading';
 import ConfirmDialog from '../components/ConfirmDialog';
+import ProjectVersionSidebar from '../components/ProjectVersionSidebar';
 import toast from 'react-hot-toast';
 
 const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:4014/api').replace('/api', '');
@@ -25,6 +26,7 @@ export default function VersionDetailPage() {
   const [pendingFiles, setPendingFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+  const [deleteImageInfo, setDeleteImageInfo] = useState(null);
   const [viewImages, setViewImages] = useState(null);
   const [lightboxImg, setLightboxImg] = useState(null);
   const [search, setSearch] = useState('');
@@ -178,6 +180,32 @@ export default function VersionDetailPage() {
     }
   };
 
+  const handleDeleteImage = async () => {
+    if (!deleteImageInfo) return;
+    const { imageId, testCaseId } = deleteImageInfo;
+    try {
+      await testCaseService.deleteImage(imageId);
+      toast.success('Deleted');
+      setDeleteImageInfo(null);
+      if (viewImages?.testCaseId === testCaseId) {
+        setViewImages(prev => {
+          const nextImages = prev.images.filter(img => img.id !== imageId);
+          if (nextImages.length === 0) return null;
+          return { ...prev, images: nextImages };
+        });
+      }
+      if (detailTc?.id === testCaseId) {
+        setDetailTc(prev => ({ ...prev, images: prev.images.filter(img => img.id !== imageId) }));
+      }
+      if (editTc?.id === testCaseId) {
+        setEditTc(prev => ({ ...prev, images: prev.images.filter(img => img.id !== imageId) }));
+      }
+      load();
+    } catch (e) {
+      toast.error('Failed');
+    }
+  };
+
   const handleExport = async () => {
     try {
       await csvService.exportTestCases({ versionId });
@@ -223,31 +251,11 @@ export default function VersionDetailPage() {
   if (!version) return <div className="text-center py-12 text-slate-500">Version not found</div>;
 
   return (
-    <div className="flex flex-col md:flex-row min-h-[calc(100vh-3.5rem)] md:h-[calc(100vh-3.5rem)] -mx-4 sm:-mx-6 lg:-mx-8 -mb-6">
-      {/* Left: Versions list (desktop only) */}
-      <aside className="hidden lg:flex flex-col w-56 flex-shrink-0 border-r border-slate-200/80 bg-white/95 overflow-y-auto">
-        <div className="p-3 border-b border-slate-100">
-          <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">{t('versionDetail.versions')}</p>
-        </div>
-        <nav className="p-2 space-y-0.5">
-          {versionsList.map((v) => (
-            <Link
-              key={v.id}
-              to={`/projects/${projectId}/versions/${v.id}`}
-              className={`block px-3 py-2 rounded-lg text-sm font-medium truncate ${
-                parseInt(v.id) === parseInt(versionId)
-                  ? 'bg-primary-50 text-primary-700'
-                  : 'text-slate-700 hover:bg-slate-100'
-              }`}
-            >
-              {v.name}
-            </Link>
-          ))}
-        </nav>
-      </aside>
+    <div className="flex min-h-[calc(100vh-3.5rem)] -mx-4 sm:-mx-6 lg:-mx-8 -mb-6">
+      <ProjectVersionSidebar projectId={projectId} versions={versionsList} currentVersionId={parseInt(versionId)} />
 
       {/* Center: Toolbar + content */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#f8fafc]">
+      <div className="flex-1 lg:ml-64 flex flex-col min-w-0 bg-white pl-6 pr-6 sm:pl-8 sm:pr-8">
         {/* Back + Toolbar — redesigned */}
         <div className="flex flex-col gap-4 p-4 sm:p-5 border-b border-slate-200/80 bg-white flex-shrink-0 shadow-sm">
           <Link
@@ -319,7 +327,7 @@ export default function VersionDetailPage() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-auto p-4 md:p-0">
+        <div className="flex-1 overflow-auto p-4 md:p-4">
           {filteredTcs.length > 0 ? (
             <>
               {/* Mobile: card list */}
@@ -404,10 +412,10 @@ export default function VersionDetailPage() {
                 ))}
               </div>
 
-              {/* Desktop: table */}
-              <div className="hidden md:block h-full overflow-auto">
+              {/* Desktop: table – card so it stands out on white page */}
+              <div className="hidden md:block h-full overflow-auto rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
                 <table className="w-full text-sm border-collapse">
-                  <thead className="bg-slate-50 sticky top-0 z-10">
+                  <thead className="bg-slate-50/80 sticky top-0 z-10 border-b border-slate-200">
                     <tr>
                       <th className="text-left py-2.5 px-3 font-medium text-slate-500 w-20">{t('versionDetail.date')}</th>
                       <th className="text-left py-2.5 px-3 font-medium text-slate-500">{t('testCase.title')}</th>
@@ -560,15 +568,25 @@ export default function VersionDetailPage() {
                 <p className="text-xs font-medium text-slate-500 mb-2">{t('versionDetail.screenshots')}</p>
                 <div className="flex flex-wrap gap-2">
                   {detailTc.images.map((img) => (
-                    <a
-                      key={img.id}
-                      href={`${API_BASE}/uploads/${img.filePath}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block w-20 h-20 rounded-lg border border-slate-200 overflow-hidden"
-                    >
-                      <img src={`${API_BASE}/uploads/${img.filePath}`} alt={img.originalName} className="w-full h-full object-cover" />
-                    </a>
+                    <div key={img.id} className="relative group">
+                      <a
+                        href={`${API_BASE}/uploads/${img.filePath}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block w-20 h-20 rounded-lg border border-slate-200 overflow-hidden"
+                      >
+                        <img src={`${API_BASE}/uploads/${img.filePath}`} alt={img.originalName} className="w-full h-full object-cover" />
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => setDeleteImageInfo({ imageId: img.id, testCaseId: detailTc.id })}
+                        className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 hover:bg-red-600 transition-opacity shadow"
+                        title={t('versionDetail.delete')}
+                        aria-label={t('versionDetail.delete')}
+                      >
+                        ×
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -677,12 +695,22 @@ export default function VersionDetailPage() {
               {editTc?.images?.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-2">
                   {editTc.images.map((img) => (
-                    <img
-                      key={img.id}
-                      src={`${API_BASE}/uploads/${img.filePath}`}
-                      alt={img.originalName}
-                      className="w-14 h-14 object-cover rounded border border-slate-200"
-                    />
+                    <div key={img.id} className="relative group">
+                      <img
+                        src={`${API_BASE}/uploads/${img.filePath}`}
+                        alt={img.originalName}
+                        className="w-14 h-14 object-cover rounded border border-slate-200"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setDeleteImageInfo({ imageId: img.id, testCaseId: editTc.id })}
+                        className="absolute -top-0.5 -right-0.5 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 hover:bg-red-600 transition-opacity shadow"
+                        title={t('versionDetail.delete')}
+                        aria-label={t('versionDetail.delete')}
+                      >
+                        ×
+                      </button>
+                    </div>
                   ))}
                 </div>
               )}
@@ -730,13 +758,23 @@ export default function VersionDetailPage() {
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {viewImages.images.map((img) => (
-                <img
-                  key={img.id}
-                  src={`${API_BASE}/uploads/${img.filePath}`}
-                  alt={img.originalName}
-                  className="w-full h-40 object-cover rounded-lg cursor-pointer border border-slate-200"
-                  onClick={() => setLightboxImg(`${API_BASE}/uploads/${img.filePath}`)}
-                />
+                <div key={img.id} className="relative group">
+                  <img
+                    src={`${API_BASE}/uploads/${img.filePath}`}
+                    alt={img.originalName}
+                    className="w-full h-40 object-cover rounded-lg cursor-pointer border border-slate-200"
+                    onClick={() => setLightboxImg(`${API_BASE}/uploads/${img.filePath}`)}
+                  />
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); setDeleteImageInfo({ imageId: img.id, testCaseId: viewImages.testCaseId }); }}
+                    className="absolute top-1 right-1 w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 hover:bg-red-600 transition-opacity shadow"
+                    title={t('versionDetail.delete')}
+                    aria-label={t('versionDetail.delete')}
+                  >
+                    ×
+                  </button>
+                </div>
               ))}
             </div>
           </div>
@@ -789,6 +827,13 @@ export default function VersionDetailPage() {
         message={t('versionDetail.deleteTestCaseConfirm')}
         onConfirm={handleDelete}
         onCancel={() => setDeleteId(null)}
+      />
+      <ConfirmDialog
+        open={!!deleteImageInfo}
+        title={t('versionDetail.deletePhotoTitle')}
+        message={t('versionDetail.deletePhotoConfirm')}
+        onConfirm={handleDeleteImage}
+        onCancel={() => setDeleteImageInfo(null)}
       />
     </div>
   );

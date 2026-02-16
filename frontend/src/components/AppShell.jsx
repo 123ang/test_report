@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLang } from '../context/LangContext';
-import { useBreadcrumb } from '../context/BreadcrumbContext';
 
 const navItems = [
-  { to: '/', labelKey: 'nav.dashboard', icon: HomeIcon },
+  { to: '/dashboard', labelKey: 'nav.dashboard', icon: HomeIcon },
   { to: '/projects', labelKey: 'nav.projects', icon: FolderIcon },
   { to: '/csv-import', labelKey: 'nav.import', icon: UploadIcon },
 ];
@@ -33,52 +32,79 @@ function UploadIcon({ className }) {
 }
 
 export default function AppShell() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { user, logout } = useAuth();
   const { lang, changeLang, t } = useLang();
-  const { items: breadcrumbItems } = useBreadcrumb();
   const location = useLocation();
 
-  const closeSidebar = () => setSidebarOpen(false);
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <div className="min-h-screen flex flex-col bg-[#f8fafc]">
-      {/* Topbar */}
-      <header className="sticky top-0 z-30 flex h-14 flex-shrink-0 items-center gap-4 border-b border-slate-200/80 bg-white/95 backdrop-blur-sm px-4 sm:px-6 shadow-sm">
+      {/* Top bar: logo, nav links, lang, user, logout */}
+      <header className="sticky top-0 z-30 flex h-14 flex-shrink-0 items-center gap-2 sm:gap-4 border-b border-slate-200/80 bg-white/95 backdrop-blur-sm px-4 sm:px-6 shadow-sm">
         <button
           type="button"
-          onClick={() => setSidebarOpen(true)}
-          className="lg:hidden -ml-2 p-2 rounded-lg text-slate-500 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
+          onClick={() => setMenuOpen((o) => !o)}
+          className="md:hidden -ml-2 p-2 rounded-lg text-slate-500 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary-500"
           aria-label="Open menu"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <Link to="/dashboard" className="flex items-center gap-2 min-w-0">
+        <Link to="/dashboard" className="flex items-center gap-2 min-w-0 flex-shrink-0">
           <img src="/logo.png" alt="Test Report" className="w-8 h-8 flex-shrink-0 object-contain" />
           <span className="font-semibold text-slate-900 hidden sm:block truncate">Test Report</span>
         </Link>
 
-        {/* Breadcrumbs */}
-        <nav className="hidden sm:flex items-center gap-1.5 flex-1 min-w-0 ml-4 text-sm" aria-label="Breadcrumb">
-          {breadcrumbItems.length > 0 ? (
-            breadcrumbItems.map((item, i) => (
-              <span key={i} className="flex items-center gap-1.5 min-w-0">
-                {i > 0 && <span className="text-slate-300">/</span>}
-                {item.to ? (
-                  <Link to={item.to} className="text-slate-500 hover:text-slate-700 truncate">
-                    {item.label}
-                  </Link>
-                ) : (
-                  <span className="text-slate-900 font-medium truncate">{item.label}</span>
-                )}
-              </span>
-            ))
-          ) : (
-            <span className="text-slate-400">—</span>
-          )}
+        {/* Top nav: Dashboard, Projects, Import CSV */}
+        <nav className="hidden md:flex items-center gap-0.5 flex-1 min-w-0 ml-2" aria-label="Main">
+          {navItems.map((item) => {
+            const isActive = location.pathname === item.to || (item.to !== '/dashboard' && location.pathname.startsWith(item.to));
+            const label = item.labelKey ? t(item.labelKey) : item.label;
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  isActive ? 'bg-primary-50 text-primary-700' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                }`}
+              >
+                <Icon className="w-5 h-5 flex-shrink-0" />
+                <span>{label}</span>
+              </Link>
+            );
+          })}
         </nav>
+
+        {/* Mobile nav dropdown */}
+        {menuOpen && (
+          <>
+            <div className="fixed inset-0 z-30 bg-slate-900/20 md:hidden" onClick={closeMenu} aria-hidden="true" />
+            <div className="fixed top-14 left-4 right-4 z-40 md:hidden bg-white rounded-xl border border-slate-200 shadow-lg py-2">
+              {navItems.map((item) => {
+                const isActive = location.pathname === item.to || (item.to !== '/dashboard' && location.pathname.startsWith(item.to));
+                const label = item.labelKey ? t(item.labelKey) : item.label;
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    onClick={closeMenu}
+                    className={`flex items-center gap-3 px-4 py-3 text-sm font-medium transition-colors ${
+                      isActive ? 'bg-primary-50 text-primary-700' : 'text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    <Icon className="w-5 h-5 flex-shrink-0" />
+                    <span>{label}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </>
+        )}
 
         <div className="flex items-center gap-2 ml-auto flex-shrink-0">
           <div className="flex items-center rounded-lg bg-slate-100 p-0.5">
@@ -114,59 +140,10 @@ export default function AppShell() {
         </div>
       </header>
 
-      <div className="flex flex-1 min-h-0">
-        {/* Sidebar */}
-        <aside
-          className={`fixed inset-y-0 left-0 z-40 w-64 bg-white/95 backdrop-blur-sm border-r border-slate-200/80 transform transition-transform duration-200 ease-out lg:translate-x-0 lg:static lg:inset-auto shadow-lg lg:shadow-none ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
-        >
-          <div className="flex h-14 items-center justify-between px-4 border-b border-slate-100 lg:hidden">
-            <span className="font-semibold text-slate-900">Menu</span>
-            <button
-              type="button"
-              onClick={closeSidebar}
-              className="p-2 rounded-lg text-slate-500 hover:bg-slate-100"
-              aria-label="Close menu"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-          <nav className="p-3 space-y-0.5 pt-4 lg:pt-3">
-            {navItems.map((item) => {
-              const isActive = item.to === '/' ? location.pathname === '/' : location.pathname.startsWith(item.to);
-              const label = item.labelKey ? t(item.labelKey) : item.label;
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  onClick={closeSidebar}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    isActive ? 'bg-primary-50 text-primary-700' : 'text-slate-700 hover:bg-slate-100'
-                  }`}
-                >
-                  <Icon className="w-5 h-5 flex-shrink-0" />
-                  <span>{label}</span>
-                </Link>
-              );
-            })}
-          </nav>
-        </aside>
-
-        {sidebarOpen && (
-          <div
-            className="fixed inset-0 z-30 bg-slate-900/20 lg:hidden"
-            onClick={closeSidebar}
-            aria-hidden="true"
-          />
-        )}
-
-        {/* Main - fills remaining height so white content area reaches bottom */}
-        <main className="flex-1 min-w-0 min-h-0 flex flex-col py-4 sm:py-6 px-4 sm:px-6 lg:px-8 bg-white">
-          <Outlet />
-        </main>
-      </div>
+      {/* Main content - full width */}
+      <main className="flex-1 min-w-0 min-h-0 flex flex-col py-4 sm:py-6 px-4 sm:px-6 lg:px-8 bg-white">
+        <Outlet />
+      </main>
     </div>
   );
 }

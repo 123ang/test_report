@@ -234,6 +234,11 @@
     "termsPageTitle": "Terms and Conditions",
     "lastUpdated": "Last updated"
   },
+  "versions": {
+    "title": "Versions",
+    "noVersions": "No versions yet",
+    "selectProject": "Select a project"
+  },
   "members": {
     "title": "Members",
     "addMember": "Add Member",
@@ -283,7 +288,9 @@
     "notesPlaceholder": "Extra notes",
     "photosScreenshots": "Photos / Screenshots",
     "addPhotos": "Add photos",
-    "photosTitle": "Photos —"
+    "photosTitle": "Photos —",
+    "deletePhotoTitle": "Remove photo",
+    "deletePhotoConfirm": "Are you sure you want to remove this photo?"
   },
   "projectDetail": {
     "backToProjects": "Back to Projects",
@@ -314,6 +321,7 @@
     "createButton": "Create",
     "createProject": "Create project",
     "yourProjects": "Your projects",
+    "noProjects": "No projects",
     "openProject": "Open project",
     "finishedProjects": "Finished projects",
     "versionCount": "version",

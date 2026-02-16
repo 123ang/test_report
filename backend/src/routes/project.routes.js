@@ -78,8 +78,11 @@ router.post('/', async (req, res, next) => {
   try {
     const { name, description, language, status } = req.body;
     if (!name) return res.status(400).json({ error: 'Name is required' });
+    const data = { name, description: description || null, language: language || 'en', createdById: req.user.id };
+    if (status === 'finished') data.status = 'finished';
+    // else rely on DB default 'active' (avoids errors if migration add_project_status not yet applied)
     const project = await prisma.project.create({
-      data: { name, description, language: language || 'en', status: status === 'finished' ? 'finished' : 'active', createdById: req.user.id },
+      data,
       include: { createdBy: { select: { id: true, name: true } } },
     });
     res.status(201).json(project);

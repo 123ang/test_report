@@ -234,6 +234,11 @@
     "termsPageTitle": "利用規約",
     "lastUpdated": "最終更新"
   },
+  "versions": {
+    "title": "バージョン",
+    "noVersions": "バージョンがありません",
+    "selectProject": "プロジェクトを選択"
+  },
   "members": {
     "title": "メンバー",
     "addMember": "メンバーを追加",
@@ -283,7 +288,9 @@
     "notesPlaceholder": "その他メモ",
     "photosScreenshots": "写真 / スクリーンショット",
     "addPhotos": "写真を追加",
-    "photosTitle": "写真 —"
+    "photosTitle": "写真 —",
+    "deletePhotoTitle": "写真を削除",
+    "deletePhotoConfirm": "この写真を削除してもよろしいですか？"
   },
   "projectDetail": {
     "backToProjects": "プロジェクトに戻る",
@@ -314,6 +321,7 @@
     "createButton": "作成",
     "createProject": "プロジェクトを作成",
     "yourProjects": "あなたのプロジェクト",
+    "noProjects": "プロジェクトがありません",
     "openProject": "プロジェクトを開く",
     "finishedProjects": "終了したプロジェクト",
     "versionCount": "バージョン",

@@ -7,6 +7,7 @@ import { useBreadcrumb } from '../context/BreadcrumbContext';
 import { SectionHeader } from '../components/ui';
 import Loading from '../components/Loading';
 import ConfirmDialog from '../components/ConfirmDialog';
+import ProjectVersionSidebar from '../components/ProjectVersionSidebar';
 import toast from 'react-hot-toast';
 
 const ProjectDetailPage = () => {
@@ -143,7 +144,10 @@ const ProjectDetailPage = () => {
   if (!project) return <div className="text-center py-12 text-gray-500">Project not found</div>;
 
   return (
-    <div className="space-y-6">
+    <div className="flex min-h-screen">
+      <ProjectVersionSidebar projectId={id} versions={versions} />
+      
+      <div className="flex-1 lg:ml-64 space-y-6 pl-6 pr-6 sm:pl-8 sm:pr-8">
       <Link
         to="/projects"
         className="inline-flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-primary-600 w-fit -ml-1 py-1.5 mb-2 touch-manipulation"
@@ -368,6 +372,7 @@ const ProjectDetailPage = () => {
       <ConfirmDialog open={!!removeMemberId} title={t('members.removeMember')} message={t('members.removeMemberConfirm')} onConfirm={handleRemoveMember} onCancel={() => setRemoveMemberId(null)} />
       <ConfirmDialog open={reopenProjectConfirm} title={t('projects.reopenProjectTitle')} message={t('projects.reopenProjectMessage')} confirmLabel={t('projects.reopenConfirmLabel')} onConfirm={handleReopenProject} onCancel={() => setReopenProjectConfirm(false)} />
       <ConfirmDialog open={endProjectConfirm} title={t('projects.endProject')} message={t('projectDetail.endProjectConfirm')} confirmLabel={t('projectDetail.endConfirmLabel')} onConfirm={handleEndProject} onCancel={() => setEndProjectConfirm(false)} />
+      </div>
     </div>
   );
 };
