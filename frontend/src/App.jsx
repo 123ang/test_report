@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { LangProvider } from './context/LangContext';
 import { BreadcrumbProvider } from './context/BreadcrumbContext';
 import AppShell from './components/AppShell';
+import ProjectsLayout from './components/ProjectsLayout';
 import LandingPage from './pages/LandingPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsPage from './pages/TermsPage';
@@ -56,9 +57,11 @@ function App() {
             {/* Protected app routes */}
             <Route element={<ProtectedRoute><BreadcrumbProvider><AppShell /></BreadcrumbProvider></ProtectedRoute>}>
               <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/projects" element={<ProjectsPage />} />
-              <Route path="/projects/:id" element={<ProjectDetailPage />} />
-              <Route path="/projects/:projectId/versions/:versionId" element={<VersionDetailPage />} />
+              <Route path="/projects" element={<ProjectsLayout />}>
+                <Route index element={<ProjectsPage />} />
+                <Route path=":id" element={<ProjectDetailPage />} />
+                <Route path=":projectId/versions/:versionId" element={<VersionDetailPage />} />
+              </Route>
               <Route path="/csv-import" element={<CSVImportPage />} />
             </Route>
 

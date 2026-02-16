@@ -9,7 +9,6 @@ import { Badge, Sheet } from '../components/ui';
 import { BUG_TEMPLATES, getBugTemplate } from '../utils/bugTemplates';
 import Loading from '../components/Loading';
 import ConfirmDialog from '../components/ConfirmDialog';
-import ProjectVersionSidebar from '../components/ProjectVersionSidebar';
 import toast from 'react-hot-toast';
 
 const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:4014/api').replace('/api', '');
@@ -251,11 +250,9 @@ export default function VersionDetailPage() {
   if (!version) return <div className="text-center py-12 text-slate-500">Version not found</div>;
 
   return (
-    <div className="flex min-h-[calc(100vh-3.5rem)] -mx-4 sm:-mx-6 lg:-mx-8 -mb-6">
-      <ProjectVersionSidebar projectId={projectId} versions={versionsList} currentVersionId={parseInt(versionId)} />
-
-      {/* Center: Toolbar + content */}
-      <div className="flex-1 lg:ml-64 flex flex-col min-w-0 bg-white pl-6 pr-6 sm:pl-8 sm:pr-8">
+    <>
+    <div className="flex flex-col min-w-0 bg-white pl-6 pr-6 sm:pl-8 sm:pr-8 min-h-[calc(100vh-3.5rem)]">
+      {/* Toolbar + content */}
         {/* Back + Toolbar — redesigned */}
         <div className="flex flex-col gap-4 p-4 sm:p-5 border-b border-slate-200/80 bg-white flex-shrink-0 shadow-sm">
           <Link
@@ -835,6 +832,6 @@ export default function VersionDetailPage() {
         onConfirm={handleDeleteImage}
         onCancel={() => setDeleteImageInfo(null)}
       />
-    </div>
+    </>
   );
 }

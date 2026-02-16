@@ -6,7 +6,6 @@ import { useLang } from '../context/LangContext';
 import { useBreadcrumb } from '../context/BreadcrumbContext';
 import Loading from '../components/Loading';
 import ConfirmDialog from '../components/ConfirmDialog';
-import ProjectVersionSidebar from '../components/ProjectVersionSidebar';
 import toast from 'react-hot-toast';
 
 const ProjectsPage = () => {
@@ -145,9 +144,7 @@ const ProjectsPage = () => {
   if (loading) return <Loading />;
 
   return (
-    <div className="flex min-h-full">
-      <ProjectVersionSidebar projects={projects} />
-      <div className="flex-1 lg:ml-64 min-w-0 pl-6 pr-6 sm:pl-8 sm:pr-8">
+    <div className="pl-6 pr-6 sm:pl-8 sm:pr-8">
       {/* Hero / header – theme from logo (sky primary) */}
       <div className="relative rounded-2xl bg-gradient-to-br from-primary-50 via-white to-primary-50/50 border border-primary-100/80 p-6 sm:p-8 mb-8 shadow-sm overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary-200/20 rounded-full -translate-y-1/2 translate-x-1/2" aria-hidden="true" />
@@ -346,7 +343,6 @@ const ProjectsPage = () => {
       <ConfirmDialog open={!!removeMemberId} title={t('members.removeMember')} message={t('members.removeMemberConfirm')} onConfirm={handleRemoveMember} onCancel={() => setRemoveMemberId(null)} />
       <ConfirmDialog open={!!endProjectId} title={t('projects.endProject')} message={t('projects.endProjectConfirm')} confirmLabel={t('projects.endConfirmLabel')} onConfirm={handleEndProject} onCancel={() => setEndProjectId(null)} />
       <ConfirmDialog open={!!reopenProjectId} title={t('projects.reopenProjectTitle')} message={t('projects.reopenProjectMessage')} confirmLabel={t('projects.reopenConfirmLabel')} onConfirm={handleReopenProject} onCancel={() => setReopenProjectId(null)} />
-      </div>
     </div>
   );
 };

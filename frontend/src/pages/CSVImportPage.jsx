@@ -98,7 +98,7 @@ const CSVImportPage = () => {
   };
 
   return (
-    <div className="min-h-full space-y-8 max-w-3xl">
+    <div className="min-h-full space-y-8 max-w-3xl mx-auto">
       {/* Hero */}
       <div className="relative rounded-2xl bg-gradient-to-br from-primary-50 via-white to-primary-50/50 border border-primary-100/80 p-6 sm:p-8 shadow-sm overflow-hidden">
         <div className="absolute top-0 right-0 w-48 h-48 bg-primary-200/20 rounded-full -translate-y-1/2 translate-x-1/2" aria-hidden="true" />

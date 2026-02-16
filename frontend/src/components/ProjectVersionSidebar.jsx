@@ -41,7 +41,8 @@ export default function ProjectVersionSidebar({
 }) {
   const { t } = useLang();
   const params = useParams();
-  const projectId = projectIdProp != null ? parseInt(projectIdProp) : (params.id ? parseInt(params.id) : null);
+  const projectIdFromParams = params.id || params.projectId;
+  const projectId = projectIdProp != null ? parseInt(projectIdProp) : (projectIdFromParams ? parseInt(projectIdFromParams) : null);
   const versionIdFromRoute = params.versionId ? parseInt(params.versionId) : null;
   const activeVersionId = currentVersionIdProp != null ? currentVersionIdProp : versionIdFromRoute;
 
@@ -86,6 +87,21 @@ export default function ProjectVersionSidebar({
       setExpandedIds((prev) => new Set(prev).add(projectId));
     }
   }, [projectId]);
+
+  // When projectId is in URL (e.g. from layout), ensure we load versions for it so sidebar shows versions
+  useEffect(() => {
+    if (projectId == null || versionsByProject[projectId] != null) return;
+    let cancelled = false;
+    setLoadingProjectId(projectId);
+    versionService.getByProject(projectId).then((data) => {
+      if (!cancelled) setVersionsByProject((prev) => ({ ...prev, [projectId]: data || [] }));
+    }).catch(() => {
+      if (!cancelled) setVersionsByProject((prev) => ({ ...prev, [projectId]: [] }));
+    }).finally(() => {
+      if (!cancelled) setLoadingProjectId(null);
+    });
+    return () => { cancelled = true; };
+  }, [projectId, versionsByProject]);
 
   // When user expands a project, fetch its versions if not cached
   const loadVersionsForProject = useCallback(async (pid) => {
