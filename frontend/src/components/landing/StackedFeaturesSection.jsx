@@ -1,7 +1,12 @@
-import React, { useRef, useMemo, useState } from 'react';
-import { motion, useScroll, AnimatePresence, useMotionValueEvent } from 'framer-motion';
+import React, { useRef, useMemo, useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useLang } from '../../context/LangContext';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+
+gsap.registerPlugin(ScrollTrigger);
+
 const VIEWPORT_ENTER = { once: true, amount: 0.35 };
 const EASE_OUT = [0, 0, 0.58, 1];
 // Shared stack-up animation: left copy and right card use the same motion so they feel in sync.
@@ -10,10 +15,11 @@ const stackUpInitial = { opacity: 0, y: 24 };
 const stackUpAnimate = { opacity: 1, y: 0 };
 const stackUpExit = { opacity: 0, y: -24 };
 
-// Scroll distance for the pin so "Clear documentation" (last step) stays visible long enough before next section.
-const SCROLL_DISTANCE_PX = 1100;
-// Vertical spacing to sections above/below (64–80px).
-const SECTION_PADDING = 'py-16 md:py-20';
+const SLIDES_COUNT = 3;
+// Pin duration: shorter = less scroll and less perceived gap.
+const PIN_VIEWPORT_MULTIPLIER = 1.5;
+// Vertical spacing: less top padding to close gap from hero; reduce bottom so workflow follows.
+const SECTION_PADDING = 'pt-8 md:pt-12 pb-6 md:pb-8';
 
 export function getFeatureTextData(t) {
   return [
@@ -30,18 +36,29 @@ export function StackedFeaturesSection() {
   const prefersReducedMotion = useReducedMotion();
   const featureData = useMemo(() => getFeatureTextData(t), [t]);
 
-  // Scroll progress over the section: 0 = section entering, 1 = section exited. No background change — only cards animate.
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    // Progress 0→1 as section moves from viewport bottom to viewport top (full scroll through the section).
-    offset: ['start end', 'end start'],
-  });
-
-  // Step thresholds: "Test cases in one place" (step 0) and "Clear documentation" (step 2) get longer holds so each stays visible long enough to read.
-  useMotionValueEvent(scrollYProgress, 'change', (v) => {
-    const idx = v < 0.4 ? 0 : v < 0.65 ? 1 : 2;
-    setActiveIndex(idx);
-  });
+  // GSAP ScrollTrigger pinning: section stays fixed while slides change; last slide visible ≥20% of pin duration.
+  useEffect(() => {
+    if (prefersReducedMotion || !sectionRef.current) return;
+    const ctx = gsap.context(() => {
+      const vh = window.innerHeight;
+      ScrollTrigger.create({
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: `+=${PIN_VIEWPORT_MULTIPLIER * vh}`,
+        pin: true,
+        scrub: true,
+        anticipatePin: 1,
+        pinSpacing: true,
+        onUpdate: (self) => {
+          const p = self.progress;
+          // Last slide (Report) gets at least 20% of scroll duration: [0,0.4]->0, [0.4,0.8]->1, [0.8,1]->2
+          const idx = p < 0.4 ? 0 : p < 0.8 ? 1 : 2;
+          setActiveIndex(idx);
+        },
+      });
+    }, sectionRef);
+    return () => ctx.revert();
+  }, [prefersReducedMotion]);
 
   // User screenshots for the 3 cards: Organized (Projects), Collaboration, Reports (project detail).
   const CARD_IMAGES = ['/landing/card-organized.png', '/landing/card-collaboration.png', '/landing/card-reports.png'];
@@ -85,19 +102,17 @@ export function StackedFeaturesSection() {
   return (
     <section
       ref={sectionRef}
-      className={`relative overflow-visible ${SECTION_PADDING}`}
+      className={`relative ${SECTION_PADDING}`}
+      style={{ minHeight: '100vh', overflow: 'visible' }}
       aria-label="Stacked features"
     >
-      {/* Wrapper height = viewport + scroll distance. Pin works because no ancestor has overflow/transform. */}
-      <div
-        className="relative"
-        style={{ height: `calc(100vh + ${SCROLL_DISTANCE_PX}px)` }}
-      >
-        {/* Pin: sticky stays centered in viewport while user scrolls through the section. top-0 + h-screen + flex center = content centered. */}
-        <div className="sticky top-0 h-screen flex items-center justify-center py-8 md:py-10 overflow-visible">
-          <div className="w-full max-w-7xl mx-auto px-6 md:px-8 lg:px-10 grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 items-center">
+      {/* Wrapper: 100vh so section fills viewport when pinned; ScrollTrigger pinSpacing adds scroll duration. */}
+      <div className="relative" style={{ minHeight: '100vh' }}>
+        <div className="sticky top-0 h-screen w-full overflow-visible flex items-center justify-center pt-0 pb-8">
+          <div className="w-full max-w-4xl px-6 md:px-8 lg:px-10 py-4 max-h-[calc(100vh-2rem)] flex items-center justify-center min-h-0 -translate-y-16 md:-translate-y-24">
+            <div className="w-full max-h-full grid grid-cols-1 lg:grid-cols-2 gap-5 md:gap-6 lg:gap-8 items-center min-h-0">
             {/* Left: copy with stack-up animation (in sync with right card) */}
-            <div className="relative min-h-[140px] lg:min-h-[160px] flex flex-col justify-center min-w-0">
+            <div className="relative min-h-[160px] lg:min-h-[180px] flex flex-col justify-center min-w-0">
               <AnimatePresence mode="wait" initial={false}>
                 <motion.div
                   key={activeIndex}
@@ -107,46 +122,47 @@ export function StackedFeaturesSection() {
                   exit={stackUpExit}
                   transition={STACK_UP_TRANSITION}
                 >
-                  <p className={`text-sm font-medium uppercase tracking-wider mb-3 ${labelClass}`}>
+                  <p className={`text-base font-medium uppercase tracking-wider mb-3 ${labelClass}`}>
                     {activeFeature.label}
                   </p>
-                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-brand-navy tracking-tight leading-tight">
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-brand-navy tracking-tight leading-tight">
                     {activeFeature.title}
                   </h2>
-                  <p className="mt-4 text-lg text-brand-navy/70 max-w-lg">
+                  <p className="mt-4 text-xl text-brand-navy/70 max-w-lg">
                     {activeFeature.description}
                   </p>
                 </motion.div>
               </AnimatePresence>
             </div>
 
-            {/* Right: single card per step, same stack-up animation as left */}
-            <div className="relative flex justify-center items-center min-h-[360px] md:min-h-[440px] min-w-0 overflow-visible">
-              <div className="w-full max-w-[60vw] relative mx-auto flex justify-center">
+            {/* Right: one card at a time in a fixed slot (absolute so cards don't stack) */}
+            <div className="relative flex justify-center items-center min-h-[260px] sm:min-h-[320px] md:min-h-[380px] w-full flex-shrink">
+              <div className="relative w-full max-w-[340px] sm:max-w-[420px] md:max-w-[480px] aspect-[5/4] mx-auto">
                 <AnimatePresence mode="wait" initial={false}>
                   <motion.div
                     key={activeIndex}
-                    className="w-full max-w-[60vw] flex justify-center items-center"
+                    className="absolute inset-0 flex justify-center items-center"
                     initial={stackUpInitial}
                     animate={stackUpAnimate}
                     exit={stackUpExit}
                     transition={STACK_UP_TRANSITION}
                   >
-                    <div className="relative w-full" aria-hidden>
+                    <div className="relative w-full h-full" aria-hidden>
                       {/* Stack effect: soft shadow layers behind the card */}
                       <div className="absolute inset-0 rounded-xl bg-white/60 border border-brand-navy/10 translate-y-2 translate-x-2 scale-[0.98]" style={{ boxShadow: '0 4px 12px rgba(62,86,103,0.08)' }} />
                       <div className="absolute inset-0 rounded-xl bg-white/40 border border-brand-navy/5 translate-y-1 translate-x-1 scale-[0.99]" style={{ boxShadow: '0 2px 8px rgba(62,86,103,0.06)' }} />
-                      <div className="relative w-full rounded-xl overflow-hidden border border-brand-navy/10 bg-white shadow-lg">
+                      <div className="absolute inset-0 rounded-xl overflow-hidden border border-brand-navy/10 bg-white shadow-lg flex items-center justify-center bg-slate-50">
                         <img
                           src={CARD_IMAGES[activeIndex]}
                           alt=""
-                          className="w-full h-auto block"
+                          className="w-full h-full object-contain object-top"
                         />
                       </div>
                     </div>
                   </motion.div>
                 </AnimatePresence>
               </div>
+            </div>
             </div>
           </div>
         </div>

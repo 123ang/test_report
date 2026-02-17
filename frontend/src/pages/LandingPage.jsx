@@ -29,7 +29,7 @@ function useInView(options = {}) {
 const LandingPage = () => {
   const { lang, changeLang, t } = useLang();
   const [heroRef, heroInView] = useInView();
-  const [workflowRef, workflowInView] = useInView();
+  const [workflowRef, workflowInView] = useInView({ threshold: 0.2 });
   const [reportRef, reportInView] = useInView();
   const [trustRef, trustInView] = useInView();
   const [ctaRef, ctaInView] = useInView();
@@ -135,10 +135,12 @@ const LandingPage = () => {
         {/* 2) Stacked Preview - folder stacking scroll section */}
         <StackedFeaturesSection />
 
-        {/* 3) Workflow */}
-        <section className="relative py-6 md:py-8 lg:py-12 overflow-x-hidden">
+        {/* 3) Workflow — overlap + entrance bridge (next section after pinned) */}
+        <div ref={workflowRef} className={`next-section-bridge ${workflowInView ? 'next-section-bridge--visible' : ''}`}>
+        <section className="relative pt-4 md:pt-6 pb-6 md:pb-8 lg:pb-12 overflow-x-hidden">
           <div className="section-overlay bg-gradient-to-b from-transparent via-[rgba(111,168,220,0.04)] to-transparent" />
-          <div ref={workflowRef} className="max-w-6xl mx-auto px-6 md:px-8 relative">
+          <div className="next-section-bridge__gradient" aria-hidden />
+          <div className="max-w-6xl mx-auto px-6 md:px-8 relative">
             <motion.p
               className="text-sm font-medium text-brand-accent uppercase tracking-wider mb-3"
               initial={{ opacity: 0, y: 12 }}
@@ -162,6 +164,7 @@ const LandingPage = () => {
             </div>
           </div>
         </section>
+        </div>
 
         {/* 4) Report Showcase */}
         <section className="relative py-6 md:py-10 lg:py-14 bg-gradient-to-b from-[#6FA8DC]/18 via-[#6FA8DC]/10 to-transparent">

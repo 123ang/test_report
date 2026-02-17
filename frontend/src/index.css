@@ -406,3 +406,38 @@
     @apply text-xl sm:text-2xl lg:text-3xl;
   }
 }
+
+/* Next section after pinned: overlap + entrance + top fade bridge (minimal, no redesign) */
+.next-section-bridge {
+  margin-bottom: -40px;
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateY(-16px);
+  transition: opacity 0.75s ease-out, filter 0.75s ease-out, transform 0.75s ease-out;
+}
+@media (min-width: 768px) {
+  .next-section-bridge {
+    margin-bottom: -80px;
+    transform: translateY(-56px);
+  }
+}
+.next-section-bridge.next-section-bridge--visible {
+  opacity: 1;
+  filter: blur(0);
+  transform: translateY(-40px);
+}
+@media (min-width: 768px) {
+  .next-section-bridge.next-section-bridge--visible {
+    transform: translateY(-80px);
+  }
+}
+.next-section-bridge__gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 110px;
+  background: linear-gradient(to bottom, var(--brand-bg) 0%, rgba(247, 248, 250, 0.6) 50%, transparent 100%);
+  pointer-events: none;
+  z-index: 0;
+}
